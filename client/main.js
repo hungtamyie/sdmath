@@ -281,6 +281,7 @@ function leaveQuiz(){
         saveToLocalStudentResults(result)
         if(!offlineMode){
             resultsToSend.push({resultId: uid, result: result, tries: 0})
+            uploadResults()
         }
     }
 }
