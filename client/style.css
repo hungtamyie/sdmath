@@ -1,0 +1,533 @@
+.screen {
+    width: 100%;
+    height: 100vh;
+    background: url(images/background.png) no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+html {
+    font-size: 1.2px;
+    overflow: hidden;
+}
+
+body {
+    margin: 0px;
+    border: 0px;
+    background-color: #252E3C;
+    font-family: 'Lilita One', cursive;
+    color: white;
+    font-size: 20rem;
+}
+
+.content_box {
+    background-color: #E7CD44;
+    padding: 0rem;
+    border-radius: 40rem;
+    padding-bottom: 20rem;
+    display: inline-block;
+    text-align: center;
+    box-shadow: 0px 2rem 0px 2rem rgba(0, 0, 0, 0.219);   
+}
+
+.login_content_box {
+    width: 450rem;
+}
+
+.title {
+    color: #0245F0;
+    font-size: 70rem;
+    text-shadow: 0.2rem 2rem 3rem rgba(0, 0, 0, 0.349);
+    padding: 5rem;
+    padding-left: 15rem;
+    padding-right: 15rem;
+    border-top-left-radius: 40rem;
+    border-top-right-radius: 40rem;
+    background: #ffeb8a;
+    text-align: center;
+    border-bottom: 5rem solid #ffffff;
+    margin-bottom: 5rem;
+}
+.smalltitle {
+    font-size: 64rem;
+}
+.input_yellow {
+    background-color: white;
+    border: none;
+    font-size: 35rem;
+    text-align: center;
+    font-family: 'Lilita One', cursive;
+    box-shadow: inset 1rem 2rem 2rem #00000067;
+    border-radius: 5rem;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    width: 400rem;
+    margin-top: 25rem;
+}
+
+.input_yellow:focus {
+    -webkit-box-shadow:inset 0px 0px 0px 3rem rgb(0, 0, 0);
+    -moz-box-shadow:inset 0px 0px 0px 3rem rgb(0, 0, 0);
+    box-shadow:inset 0px 0px 0px 3rem rgb(0, 0, 0);
+}
+
+.code_input {
+    width: 205rem;
+    text-transform: uppercase;
+    font-size: 50rem;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+    outline: none;
+}
+
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Safari */
+       -khtml-user-select: none; /* Konqueror HTML */
+         -moz-user-select: none; /* Old versions of Firefox */
+          -ms-user-select: none; /* Internet Explorer/Edge */
+              user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome, Edge, Opera and Firefox */
+  }
+
+.blue_button {
+    background: #0245F0;
+    color: white;
+    display: inline-block;
+    padding: 15rem;
+    font-size: 35rem;
+    margin-top: 25rem;
+    padding-left: 45rem;
+    padding-right: 45rem;
+    border-radius: 25rem;
+    box-shadow: 0px 2rem 2rem 2rem rgba(0, 0, 0, 0.319);
+    cursor: pointer;
+}
+
+.green_button {
+    background: #1CA805;
+    color: white;
+    display: inline-block;
+    padding: 15rem;
+    font-size: 35rem;
+    margin-top: 25rem;
+    padding-left: 45rem;
+    padding-right: 45rem;
+    border-radius: 25rem;
+    box-shadow: 0px 2rem 2rem 2rem rgba(0, 0, 0, 0.319);
+    margin-left: 10rem;
+    cursor: pointer;
+}
+
+.button {
+    -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Safari */
+       -khtml-user-select: none; /* Konqueror HTML */
+         -moz-user-select: none; /* Old versions of Firefox */
+          -ms-user-select: none; /* Internet Explorer/Edge */
+              user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome, Edge, Opera and Firefox */
+}
+
+.button:hover {
+    transform: scale(1.05);
+}
+
+.button:active {
+    transform: scale(1);
+    filter: brightness(1.1);
+}
+
+.light_blue_button {
+    background: #3591E7;
+    color: white;
+    display: inline-block;
+    padding: 10rem;
+    font-size: 35rem;
+    margin-top: 15rem;
+    padding-left: 45rem;
+    padding-right: 45rem;
+    border-radius: 20rem;
+    width: 200rem;
+    box-shadow: 0.5rem 1rem 3rem rgba(0, 0, 0, 0.419);
+    cursor: pointer;
+}
+
+.deselected {
+    background: grey;
+    color: rgb(172, 172, 172)
+}
+
+.deselected:hover {
+    color: white;
+    background: grey;
+}
+
+.level_selection_box {
+    background: white;
+    width: 340rem;
+    display: inline-flex;
+    margin-top: 20rem;
+    border-radius: 25rem;
+    color: black;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 35rem;
+    align-items: center;
+    padding: 10rem;
+    box-shadow: 0.5rem 2rem 3rem rgba(0, 0, 0, 0.419);
+}
+
+.arrow_image {
+    display: inline-block;
+    width: 30rem;
+    height: 30rem;
+    padding: 3rem;
+}
+
+.arrowLeft, .arrowRight {
+    padding-top: 8rem;
+    cursor: pointer;
+}
+
+.arrowLeft:hover, .arrowRight:hover {
+    transform: scale(1.2);
+}
+
+.arrowLeft:active, .arrowRight:active {
+    transform: scale(1);
+}
+
+.arrowLeft {
+    padding-left: 2rem;
+    padding-right: 10rem;
+}
+
+.rotate {
+    transform: rotate(180deg);
+}
+
+#studentBanner {
+    position: absolute;
+    visibility: hidden;
+    top: 15rem;
+    padding-top: 15rem;
+    height: 120rem;
+    padding-right: 50rem;
+    padding-left: 30rem;
+    font-size: 80rem;
+    border-top-right-radius: 50rem;
+    border-bottom-right-radius: 50rem;
+    background-color: #0245F0;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+#connectionStatus {
+    position: relative;
+    top: -58rem;
+    font-size: 20rem;
+    display: inline-block;
+}
+
+.disconnected {
+    background-color: #D20000;
+    padding: 3rem;
+    padding-left: 24rem;
+    padding-right: 24rem;
+    border-radius: 23rem;
+}
+
+.blue_container {
+    width: 500rem;
+    height: 100rem;
+    display: inline-flex;
+    border-radius: 30rem;
+    background-color: #3591E7;
+    justify-content: left;
+    align-items: center;
+    margin-top: -1rem;
+}
+
+.answer_input {
+    background-color: #ffffff;
+    border: none;
+    font-size: 35rem;
+    text-align: center;
+    font-family: 'Lilita One', cursive;
+    box-shadow: inset 0rem 2rem 2rem #00000067;
+    border-radius: 5rem;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    width: 110rem;
+    height: 80rem;
+    margin-top: 10rem;
+    font-size: 60rem;
+    line-height: 2rem;
+    position: relative;
+    top: -5rem;
+}
+
+.answer_input:focus {
+    -webkit-box-shadow:inset 0px 0px 0px 3rem rgb(0, 0, 0);
+    -moz-box-shadow:inset 0px 0px 0px 3rem rgb(0, 0, 0);
+    box-shadow:inset 0px 0px 0px 3rem rgb(0, 0, 0);
+}
+
+.question {
+    font-size: 60rem;
+    display: inline-block;
+    margin-right: 4rem;
+    width: 270rem;
+    text-align: right;
+}
+
+.quiz_content_box {
+    width: 700rem;
+    padding-bottom: 10rem;
+}
+
+.dark_container {
+    background-color: #C3B956;
+    display: inline-block;
+    padding: 12rem;
+    border-radius: 20rem;
+    font-size: 25rem;
+    margin-top: 15rem;
+}
+
+.quiz_finish_data {
+    padding: 20rem !important;
+    font-size: 35rem !important;
+    line-height: 46rem !important;
+    padding-left: 100rem !important;
+    padding-right: 100rem !important;
+}
+
+.progress_background {
+    background-color: #C3B956;
+    display: inline-block;
+    border-radius: 10rem;
+    font-size: 25rem;
+    margin-top: 15rem;
+    width: 600rem;
+    height: 19rem;
+    text-align: left;
+    box-shadow: inset 0rem 2rem 2rem #00000067;
+}
+
+.timeBanner {
+    background-color: #3591E7;
+    width: 120rem;
+    font-size: 50rem;
+    position: relative;
+    top: -20rem;
+    left: 570rem;
+    text-align: right;
+    padding: 2rem;
+    padding-right: 10rem;
+    box-shadow:  0rem 2rem 2rem #00000067;
+    border-top-left-radius: 10rem;
+    border-bottom-left-radius: 10rem;
+}
+
+.progress_bar {
+    display: block;
+    background: rgb(2,69,240);
+    height: 19rem;
+    width: 500rem;
+    border-radius: 10rem;
+}
+
+.check {
+    display: inline-block;
+    width: 25rem;
+    height: 20rem;
+    -webkit-background-size: 24rem;
+    -moz-background-size: 24rem;
+    -o-background-size: 24rem;
+    background-size: 24rem;
+    background-image: url('./images/check.png');
+}
+
+.x {
+    display: inline-block;
+    width: 21rem;
+    height: 19rem;
+    -webkit-background-size: 20rem;
+    -moz-background-size: 20rem;
+    -o-background-size: 20rem;
+    background-size: 20rem;
+    background-repeat: no-repeat;
+    background-image: url('./images/x.png');
+}
+
+#quizFinishBanner {
+    width: 710rem;
+    position: relative;
+    left: -5rem;
+    height: 50rem;
+    background-color: #1CA805;
+    margin-bottom: 2rem;
+    margin-top: 15rem;
+    padding-top: 15rem;
+    padding-bottom: 15rem;
+    font-size: 45rem;
+    line-height: 50rem;
+    box-shadow:  2rem 4rem 7rem 1rem #00000067;
+}
+
+#quizLeaveButton {
+    background: #3591E7;
+    margin-bottom: 5rem;
+}
+
+.leaveQuizButton>div {
+    transform: scale(2);
+    filter: brightness(50000);
+}
+
+.anchor {
+    position: absolute;
+}
+
+.leaveQuizButton {
+    position: relative;
+    width: 40rem;
+    height: 40rem;
+    left: 640rem;
+    top: 30rem;
+    cursor: pointer;
+}
+
+.leaveQuizButton:hover {
+    transform: scale(1.1);
+}
+
+.leaveQuizButton:hover>div {
+    filter: brightness(1);
+}
+
+.leaveQuizButton:active>div {
+    transform: scale(1.8);
+    filter: brightness(3);
+}
+
+#goToTeacherLogin {
+    position: fixed;
+    bottom: 20rem;
+    color:#3591E7;
+    font-size: 25rem;
+    left: 20rem;
+    cursor: pointer;
+    text-shadow: 0.2rem 2rem 3rem rgba(0, 0, 0, 0.349);
+}
+
+#teacherPasswordContainer {
+    position: fixed;
+    bottom: 20rem;
+    left: 170rem;
+    visibility: hidden;
+}
+
+.teacherPassword {
+    background-color: white;
+    border: none;
+    font-size: 25rem;
+    text-align: left;
+    font-family: 'Lilita One', cursive;
+    box-shadow: inset 1rem 2rem 2rem #00000067;
+    border-radius: 5rem;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    width: 200rem;
+    margin-top: 25rem;
+}
+
+.teacherPassword:focus {
+    -webkit-box-shadow:inset 0px 0px 0px 3rem #3591E7;
+    -moz-box-shadow:inset 0px 0px 0px 3rem #3591E7;
+    box-shadow:inset 0px 0px 0px 3rem #3591E7;
+}
+
+.teacherPasswordEnter {
+    cursor: pointer;
+    display: inline-block;
+    width: 35rem;
+    height: 30rem;
+    background: #3591E7;
+    text-align: center;
+    position: relative;
+    top: -2rem;
+    line-height: 30rem;
+    border-radius: 10rem;
+}
+
+#serverMessageContainer {
+    color: #FF7171;
+    font-size: 30rem;
+    top: 15rem;
+    left: 15rem;
+    position: relative;
+}
+
+#resultNotSentBar {
+    overflow: hidden;
+    position: fixed;
+    bottom: 0rem;
+    height: 70rem;
+    width: 100%;
+    font-size: 35rem;
+    background-color: #D20000;
+    display: none;
+}
+
+#resultWarningImg {
+    width: 60rem;
+    height: 60rem;
+    margin-top: 5rem;
+    margin-left: 15rem;
+}
+
+#resultWarningMessage {
+    height: 60rem;
+    display: inline-block;
+    position: relative;
+    top: -18rem;
+    padding-left: 20rem;
+}
+
+
+#showMyResultsButton {
+    float: right;
+    padding: 10rem;
+    padding-top: 5rem;
+    border-radius: 20rem;
+    margin-right: 15rem;
+    cursor: pointer;
+    background-color: #FF7171;
+    box-shadow: 1rem 3rem 4rem 2rem rgba(0, 0, 0, 0.419);
+    margin-top: 7rem;
+}

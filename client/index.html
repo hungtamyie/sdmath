@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SD Math</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="teacherStyle.css">
+    <script
+    src="https://code.jquery.com/jquery-3.6.4.min.js"
+    integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="
+    crossorigin="anonymous"></script>
+    <script src="http://code.jquery.com/color/jquery.color-2.1.2.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="connection.js"></script>
+    <script src="main.js"></script>
+    <script src="problemgenerator.js"></script>
+    <script src="teacher.js"></script>
+    <script src="localStorage.js"></script>
+</head>
+<body>
+    <div id="studentBanner">
+        <span id="studentName">Lilichou Madi Triche</span><br>
+        <div id="connectionStatus" class="disconnected">Disconnected from room 2345</div>
+    </div>
+    <div class="anchor">
+        <div id="serverMessageContainer">
+        </div>
+    </div>
+    <div id="copyContainer">
+        <div id="copyContainerInfo"></div>
+        <pre id="copyPage"></pre>
+        <div class="copyContainer"><div id="copyButton" class="button" onclick="CopyToClipboard('copyPage')">Copy to clipboard</div><div id="leaveCopyButton" onclick="closeCopyContainer()" class="button">Close</div></div>
+    </div>
+    <div class="screen" id="loginScreen">
+        <div class="content_box login_content_box">
+            <div class="title">SD Math</div>
+            <input class="input_yellow code_input" id="studentCodeInput" placeholder="Code" maxlength="4" autocomplete="off">
+            <br>
+            <input class="input_yellow" placeholder="Your name" id="studentNameLoginInput" maxlength="25" autocomplete="off">
+            <br>
+            <div class="blue_button button noselect" onclick="tryStudentJoin()">Enter</div>
+        </div>
+        <div class="anchor">
+            <div id="goToTeacherLogin" class="button" onclick="showTeacherPassword()">I'm a teacher</div>
+            <div id="teacherPasswordContainer">
+                <input class="teacherPassword" id="teacherPassword" type="password" value="" placeholder="password" autocomplete="off">
+                <div class="teacherPasswordEnter button" onclick="tryTeacherPassword()">Go></div>
+            </div>
+        </div>
+    </div>
+    <div class="screen" id="teacherLoginScreen">
+        <div class="content_box login_content_box">
+            <div class="title">SD Math</div>
+            <br>
+            <div class="loginBlueContainer">
+                <span>Room code:</span>
+                <input class="input_yellow code_input" placeholder="####" maxlength="4" id="teacherCodeInput" value="" autocomplete="off">
+                <input class="input_yellow" placeholder="Mrs. Tran" maxlength="25" value="" id="teacherNameInput" autocomplete="off">
+            </div>
+            <br>
+            <br>
+            <div class="loginBlueContainer">
+                <span>Test settings</span>
+                <br>
+                Percentage to pass: <input class="smallInputNumeric" placeholder="85" value="85" maxlength="3" id="percentageToPassInput" autocomplete="off"></input>%
+                <br>
+                Time limit: <input class="smallInputNumeric" placeholder="120" value="120" maxlength="3" id="timeLimitInput" autocomplete="off"></input> seconds
+                <br>
+                Number of problems: <input class="smallInputNumeric" placeholder="40" value="40" maxlength="3" id="numOfProblemsInput" autocomplete="off"></input>
+                <br>
+                Corrections mid test: <div class="ynbutton ynN button noselect" id="yny" onclick="changeYN('Yes')">Yes</div><div class="ynbutton button noselect" id="ynn" onclick="changeYN('No')">No</div>
+            </div>
+            
+            <br>
+            <div class="blue_button button noselect" onclick="tryRoomCreate()">Create Room</div>
+        </div>
+    </div>
+    <div class="screen" id="levelSelectScreen">
+        <div class="content_box login_content_box">
+            <div class="title">SD Math</div>
+            <div class="light_blue_button button noselect" id="additionButton" onclick="changeQuizType('Addition')">Addition</div>
+            <br>
+            <div class="light_blue_button button noselect deselected" id="subtractionButton" onclick="changeQuizType('Subtraction')">Subtraction</div>
+            <div class="level_selection_box">
+                <div onclick="changeLevel(-1)" class="arrowLeft noselect"><img class="arrow_image rotate noselect" src="images/arrow.png"></div>
+                <div id="levelDisplay">Level 1</div>
+                <div onclick="changeLevel(1)" class="arrowRight noselect"><img class="arrow_image noselect" src="images/arrow.png"></div>
+            </div>
+            <div class="blue_button button noselect" onclick="start(false)">Practice ></div>
+            <div class="green_button button noselect" onclick="start(true)">Test ></div>
+        </div>
+    </div>
+    <div class="screen" id="quizScreen">
+        <div class="content_box quiz_content_box">
+            <div class="anchor"><div class="leaveQuizButton" onclick="leaveQuiz()"><div class="x"></div></div></div>
+            <div class="title smalltitle" id="quizTitle">Addition Test</div>
+            <div class="timeBanner" id="timeBanner"><span id="timeDisplay">515s</span></div>
+            <div class="blue_container">
+                <div id="question" class="question">3+5=</div>
+                <input class="answer_input" id="answerInput" maxlength="2" autocomplete="off">
+            </div>
+            <br>
+            <div class="dark_container" id="outputBox">
+                Good luck!
+            </div>
+            <br>
+            <div id="progressBarOuter" class="progress_background">
+                <div class="progress_bar" id="progressBarInner"></div>
+            </div>
+        </div>
+    </div>
+    <div class="screen" id="quizFinishScreen">
+        <div class="content_box quiz_content_box">
+            <div class="title smalltitle" class="finishQuizTitle" id="quizFinishTitle">Addition Test</div>
+            <div class="dark_container quiz_finish_data" id="quizFinishData">
+                Level 5<br>Score: 45/60<br>15%
+            </div>
+            <div id="quizFinishBanner">You passed! Great job!</div>
+            <div class="blue_button button noselect" id="quizLeaveButton" onclick="changeScreen('levelSelectScreen')">Next</div>
+        </div>
+    </div>
+    <div class="screen" id="teacherScreen">
+        <div class="content_box" id="activityFeedContentBox">
+            <div class="title smalltitle">Activity Feed</div>
+                <div class="anchor">
+                    <div class="sortWarningContainer" id="sortWarning"><div class="warning"></div><span id="sortWarningText">Showing results for "John Doe"</span><div id="hideSortWarning" onclick="hideSortWarning()" class="button noselect">Back to All</div></div>
+                </div>
+                <div class="anchor">
+                    <div id="roomCodeBox">####</div>
+                </div>
+                <div class="anchor">
+                    <div class="getCopyButton noselect button" onclick="getCopy()">Get Copy</div>
+                </div>
+                <div class="tableContainer" id="tableContainer">
+                    <div class="tableHead">
+                        <div class="t0"></div>
+                        <div class="t1">Student</div>
+                        <div class="t2">Type</div>
+                        <div class="t3">Level</div>
+                        <div class="t4">Time</div>
+                        <div class="t5">Score</div>
+                        <div class="t6">%</div>
+                        <div class="t7"></div>
+                    </div>
+                    <div class="tableContentContainerOuter">
+                        <div class="tableContentContainer" id="tableContentContainer">
+                            <div class="tableDividerRed"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="detailContainer">
+                    <div class="button detailButton" id="showStudentsButton" onclick="restoreFromLocalStorage()">Restore past 24 hours</div>
+                    <div class="button detailButton" id="resultsHiddenButton">0 Results Hidden<div class="magnify"></div></div>
+                    <div class="notActive showNewButton noselect" id="showNewButton" onclick="showNew()">Waiting...</div>
+                </div>
+            </div>
+        <div class="teacherRightContainer">
+            <div class="filterContainer">
+                <div class="filterTitle">Filters</div>
+                <div class="filterInnerContainer noselect">
+                    <div class="checkbox checked" id="checkbox0" onclick="checkboxClicked(0)"></div> Show passed attempts <br>
+                    <div class="checkbox checked" id="checkbox1" onclick="checkboxClicked(1)"></div> Show failed attempts <br><br>
+                    <div class="checkbox checked" id="checkbox2" onclick="checkboxClicked(2)"></div> Show addition <br>
+                    <div class="checkbox checked" id="checkbox3" onclick="checkboxClicked(3)"></div> Show subtraction <br><br>
+                    <div class="checkbox checked" id="checkbox4" onclick="checkboxClicked(4)"></div> Show tests <br>
+                    <div class="checkbox checked" id="checkbox5" onclick="checkboxClicked(5)"></div> Show practice <br>
+                </div>
+                <br><br>
+                <div class="filterInnerContainer center_align noselect">
+                    <input class="student_name_input" id="studentNameInput" placeholder="Student name" maxlength="25" autocomplete="off">
+                    <div class="button runsearch" onclick="searchStudents()">Run Search</div>
+                    <div class="button clearsearch" onclick="clearStudentSearch()">Clear</div>
+                </div>
+            </div>
+            <div class="newFeatureContainer">
+                <div class="newFeatureButton noselect">New Feature</div>
+                Coming soon (maybe)
+            </div>
+        </div>
+    </div>
+    <div id="resultNotSentBar">
+        <img src="./images/warning.png" id="resultWarningImg">
+        <div id="resultWarningMessage">Connection error. Test results are not being sent to your teacher!</div>
+        <div class="button" id="showMyResultsButton" onclick="showUnsentResults()">Show Unsent Results</div>
+    </div>
+</body>
+</html>

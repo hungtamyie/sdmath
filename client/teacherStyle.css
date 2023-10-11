@@ -1,0 +1,519 @@
+/* hide scrollbar but allow scrolling */
+element {
+  -ms-overflow-style: none; /* for Internet Explorer, Edge */
+  scrollbar-width: none; /* for Firefox */
+  overflow-y: scroll; 
+}
+
+element::-webkit-scrollbar {
+  display: none; /* for Chrome, Safari, and Opera */
+}
+
+  #activityFeedContentBox {
+    width: 950rem;
+    height: 685rem;
+    margin-top: 100rem;
+  }
+
+.tableContainer {
+  margin-top: 10rem;
+  width: 900rem;
+  height: 500rem;
+  display: inline-block;
+  border-radius: 20rem;
+  overflow: hidden;
+}
+.tableHead>div{
+  background-color: #3591e7;
+  float: left;
+  height: 40rem;
+  line-height: 40rem;
+}
+.t0{
+  width: 40rem;
+}
+.t1{
+  width: 260rem;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.t2{
+  width: 160rem;
+  text-align: left;
+}
+.t3{
+  width: 80rem;
+}
+.t4{
+  width: 100rem;
+}
+.t5{
+  width: 110rem;
+}
+.t6{
+  width: 80rem;
+}
+.t7{
+  width: 70rem;
+  color: #3591e7;
+  cursor: pointer;
+}
+
+.tableContentContainerOuter {
+  background-color: black;
+  overflow-y:  hidden;
+  overflow-x: hidden;
+  width: 900rem;
+  height: 500rem;
+  float: left;
+}
+.tableContentContainer {
+  background-color: white;
+  margin-right: -50px; /* maximum width of scrollbar */
+  padding-right: 50px;
+  overflow-y:  scroll;
+  overflow-x: hidden;
+  width: 900rem;
+  height: 500rem;
+  float: left;
+}
+.tableContentContainer > .tableRow:nth-child(even){
+  background-color: #D9D9D9 !important;
+}
+
+.tableRow {
+  float: left;
+  width: 900rem;
+  height: 30rem;
+  line-height: 30rem;
+  color: black;
+  background-color: white;
+}
+.tableDividerRed{
+  float: left;
+  width: 900rem;
+  height: 1rem;
+  background-color: #FF7171
+}
+.tableRow>div {
+  float: left;
+  height: 30rem;
+}
+.shiftDown {
+  margin-top: 6rem;
+}
+.passed {
+  color: green;
+}
+.sortWarningContainer {
+  background: #EE6666;
+  display: inline-block;
+  padding: 5rem;
+  padding-left: 15rem;
+  border-radius: 7rem;
+  border-top-right-radius: 20rem;
+  border-bottom-right-radius: 20rem;
+  padding-right: 10rem;
+  margin-top: 5rem;
+  position: relative;
+  top: 450rem;
+  left: 20rem;
+  box-shadow: 0px 2rem 8rem rgba(0, 0, 0, 0.319);
+}
+
+#hideSortWarning {
+  border-radius: 10rem;
+  display: inline-block;
+  background-color: #FFCECE;
+  margin-left: 15rem;
+  padding: 4rem;
+  color: #3591e7;
+  cursor: pointer;
+  box-shadow: 0px 2rem 4rem rgba(0, 0, 0, 0.319);
+}
+
+.hiddenResults>.tableContentContainerOuter>.tableContentContainer>.tableRow:nth-child(even) {
+  color: grey !important;
+  background-color: black !important;
+}
+.hiddenResults>.tableContentContainerOuter>.tableContentContainer>.tableRow:nth-child(odd) {
+  color: grey !important;
+  background-color: #18223C !important;
+}
+
+.detailButton {
+  padding-left: 20rem;
+  padding-right: 20rem;
+  display: inline-block;
+  width: 270rem;
+  height: 40rem;
+  text-align: center;
+  overflow: hidden;
+  color: white;
+  background: #3591e7;
+  border-radius: 15rem;
+  font-size: 23rem;
+  padding-top: 4rem;
+  box-shadow: 0px 2rem 4rem rgba(0, 0, 0, 0.319);
+  cursor: pointer;
+  margin-top: 15rem;
+  line-height: 40rem;
+  margin-right: 15rem;
+  position: relative;
+  top: 5rem;
+}
+
+.magnify {
+  display: inline-block;
+  width: 20rem;
+  height: 20rem;
+  -webkit-background-size: 20rem;
+  -moz-background-size: 20rem;
+  -o-background-size: 20rem;
+  background-size: 20rem;
+  margin-left: 10rem;
+  background-repeat: no-repeat;
+  background-image: url('./images/magnify.png');
+}
+.warning {
+  display: inline-block;
+  width: 25rem;
+  height: 25rem;
+  -webkit-background-size: 25rem;
+  -moz-background-size: 25rem;
+  -o-background-size: 25rem;
+  background-size: 25rem;
+  margin-left: 5rem;
+  margin-right: 5rem;
+  position: relative;
+  top: 3rem;
+  background-repeat: no-repeat;
+  background-image: url('./images/warning.png');
+}
+
+.detailContainer {
+  text-align: left;
+  margin-left: 25rem
+}
+
+.showNewButton {
+  padding-left: 30rem;
+  padding-right: 30rem;
+  display: inline-block;
+  height: 55rem;
+  width: 170rem;
+  text-align: center;
+  color: white;
+  background: #1CA805;
+  border-radius: 15rem;
+  font-size: 34rem;
+  padding-top: 4rem;
+  box-shadow: 0px 2rem 4rem rgba(0, 0, 0, 0.319);
+  cursor: pointer;
+  margin-top: 15rem;
+  margin-left: 15rem;
+  line-height: 50rem;
+  margin-right: 15rem;
+}
+
+.teacherRightContainer {
+  width: 360rem;
+  height: 685rem;
+  margin-left: 40rem;
+  margin-top: 100rem;
+}
+
+.teacherScreen {
+  align-items: center;
+  justify-content: center;
+}
+
+.filterTitle {
+  color: #0245F0;
+  font-size: 60rem;
+  text-shadow: 0.2rem 2rem 3rem rgba(0, 0, 0, 0.349);
+  padding: 5rem;
+  padding-left: 15rem;
+  padding-right: 15rem;
+  border-top-left-radius: 40rem;
+  border-top-right-radius: 40rem;
+  background: #ffeb8a;
+  text-align: center;
+  border-bottom: 5rem solid #ffffff;
+  margin-bottom: 5rem;
+}
+
+.filterContainer {
+  width: 340rem;
+  height: 510rem;
+  background: #E7CD44;
+  border-radius: 40rem;
+  text-align: center;
+}
+
+.filterInnerContainer {
+  background-color: #3591e7;
+  display: inline-block;
+  width: 290rem;
+  margin-top: 5rem;
+  border-radius: 20rem;
+  text-align: left;
+  line-height: 30rem;
+  padding: 10rem;
+  
+}
+
+.checkbox {
+  border-radius: 3rem;
+  width: 18rem;
+  height: 18rem;
+  background-color: #D9D9D9;
+  display: inline-block;
+  -webkit-box-shadow:inset 0.5rem 1rem 5rem 0rem rgb(0, 0, 0, 0.5);
+  -moz-box-shadow:inset 0.5rem 1rem 5rem 0rem rgb(0, 0, 0, 0.5);
+  box-shadow:inset 0.5rem 1rem 5rem 0rem rgb(0, 0, 0, 0.5);
+  cursor: pointer;
+  position: relative;
+  top: 2rem;
+  margin-right: 5rem;
+}
+
+.checked {
+  background-image: url('./images/check.png');
+  background-size: contain;
+  background-position: 1rem 2rem;
+  background-repeat: no-repeat;
+}
+
+.checkbox:hover {
+  background-color: #f1f1f1;
+}
+
+.center_align {
+  text-align: center !important;
+}
+
+.student_name_input {
+  background-color: #ffffff;
+  border: none;
+  font-size: 25rem;
+  text-align: left;
+  font-family: 'Lilita One', cursive;
+  box-shadow: inset 1rem 2rem 2rem #00000067;
+  border-radius: 10rem;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  padding-left: 7rem;
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+  width: 270rem;
+  display: inline-block;
+}
+
+.student_name_input:focus {
+  -webkit-box-shadow:inset 0px 0px 0px 3rem rgb(0, 0, 0);
+  -moz-box-shadow:inset 0px 0px 0px 3rem rgb(0, 0, 0);
+  box-shadow:inset 0px 0px 0px 3rem rgb(0, 0, 0);
+}
+
+::placeholder {
+  color: rgb(190, 190, 190);
+  opacity: 1; /* Firefox */
+}
+
+::-ms-input-placeholder { /* Edge 12 -18 */
+  color: rgb(190, 190, 190);
+}
+
+.runsearch {
+  width: 170rem;
+  height: 40rem;
+  margin-top: 10rem;
+  display: inline-block;
+  background: #2346A1;
+  line-height: 40rem;
+  cursor: pointer;
+  margin-right: 5rem;
+  border-radius: 15rem;
+}
+
+.clearsearch {
+  cursor: pointer;
+  border-radius: 15rem;
+  display: inline-block;
+  width: 90rem;
+  height: 40rem;
+  margin-top: 10rem;
+  background: #FF7171;
+  line-height: 40rem;
+}
+
+.newFeatureContainer {
+  width: 340rem;
+  height: 165rem;
+  margin-top: 16rem;
+  background: #E7CD44;
+  border-radius: 40rem;
+  text-align: center;
+}
+
+.newFeatureButton {
+  display: inline-block;
+  background-color: #ABABAB;
+  width: 300rem;
+  height: 100rem;
+  margin-top: 20rem;
+  border-radius: 15rem;
+  color: rgb(211, 211, 211);
+  cursor: pointer;
+  font-size: 40rem;
+  margin-bottom: 10rem;
+  line-height: 100rem;
+}
+
+#copyContainer {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 100vh;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.363);
+  z-index: 10000;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+
+
+#copyPage {
+  width: 850rem;
+  height: 700rem;
+  background: white;
+  overflow: scroll;
+  color: black;
+  font-family: monospace;
+  font-size: 15rem;
+  padding: 10rem;
+}
+
+#copyButton {
+  background: #3591e7;
+  width: 300rem;
+  text-align: center;
+  padding: 10rem;
+  font-size: 30rem;
+  border-radius: 15rem;
+  display: inline-block;
+  cursor: pointer;
+  margin-left: 15rem;
+  margin-right: 45rem;
+}
+
+.notActive {
+  background-color: #ABABAB !important;
+  color: rgb(211, 211, 211) !important;
+}
+
+#leaveCopyButton {
+  background: #EE6666;
+  border-radius: 15rem;
+  width: 200rem;
+  text-align: center;
+  padding: 10rem;
+  font-size: 30rem;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.copyContainer {
+  width: 1000rem;
+  text-align: center;
+}
+
+#copyContainerInfo {
+  text-align: center;
+  width: 800rem;
+}
+
+.getCopyButton {
+  color: #3591e7;
+  position: relative;
+  top: -45rem;
+  left: 840rem;
+  cursor: pointer;
+  padding: 5rem;
+  border-radius: 10rem;
+}
+
+.getCopyButton:hover {
+  color: white;
+}
+
+.loginBlueContainer {
+  display: inline-block;
+  width: 410rem;
+  background-color: #3591e7;
+  padding: 10rem;
+  border-radius: 15rem;
+  line-height: 40rem;
+  font-size: 25rem;
+}
+
+.loginBlueContainer > span {
+  font-size: 40rem;
+}
+
+.smallInputNumeric {
+    background-color: white;
+    border: none;
+    font-size: 30rem;
+    text-align: center;
+    font-family: 'Lilita One', cursive;
+    box-shadow: inset 1rem 2rem 2rem #00000067;
+    border-radius: 5rem;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    width: 70rem;
+    margin-top: 25px;
+}
+
+.smallInputNumeric:focus {
+    -webkit-box-shadow:inset 0px 0px 0px 3rem rgb(0, 0, 0);
+    -moz-box-shadow:inset 0px 0px 0px 3rem rgb(0, 0, 0);
+    box-shadow:inset 0px 0px 0px 3rem rgb(0, 0, 0);
+}
+
+.ynbutton {
+  margin-top: 10rem;
+  display: inline-block;
+  padding: 2rem;
+  padding-left: 5rem;
+  padding-right: 5rem;
+  border: 2px solid white;
+  border-radius: 15rem;
+  cursor: pointer;
+}
+
+.ynN {
+  color: #a1d2ff;
+  border: none !important;
+}
+
+#roomCodeBox {
+  position: relative;
+  top: -83rem;
+  font-size: 40rem;
+  background: white;
+  color: black;
+  border-radius: 20rem;
+  padding: 10rem;
+  left: 26rem;
+  -webkit-box-shadow:2rem 2rem 0rem 1rem #3591e7;
+  -moz-box-shadow:2rem 2rem 0rem 1rem #3591e7;
+  box-shadow:2rem 2rem 0rem 1rem #3591e7;
+}
