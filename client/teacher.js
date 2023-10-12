@@ -110,14 +110,12 @@ function activateTeacherButtons(){
         if(showingHidden){
             showingHidden = false;
             $("#tableContainer").removeClass("hiddenResults")
-            $("#dataCopyButton").removeClass("notActive")
-            $("#dataCopyButton").addClass("button")
+            $("#getCopyButton").css("display","block")
         }
         else {
             showingHidden = true;
             $("#tableContainer").addClass("hiddenResults")
-            $("#dataCopyButton").addClass("notActive")
-            $("#dataCopyButton").removeClass("button")
+            $("#getCopyButton").css("display","none")
         }
         displayRecords(currentStudentFilter,showingHidden);
     })
