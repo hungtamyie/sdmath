@@ -228,7 +228,7 @@ function leaveQuiz(){
     appRunning = false;
     var currentTime = new Date().getTime();
     var diff = currentTime - startTime;
-    var seconds = Math.floor(diff / 1000 % 60);
+    var seconds = diff / 1000;
     var timeString = fancyTimeFormat2(seconds)
     var scoreString = "Score: " + scoreTally[0] + "/" + scoreTally[1]
     var percentageString = (Math.floor((scoreTally[0]/scoreTally[1])*100)||0)+"%"
@@ -423,7 +423,7 @@ function fancyTimeFormat(duration) {
     if(appRunning && !isPractice){
         var currentTime = new Date().getTime();
         var diff = currentTime - startTime;
-        var seconds = Math.floor(diff / 1000 % 60);
+        var seconds = diff / 1000;
         $("#timeBanner").html((teacherSettings.timeLimit - seconds) + "s")
         if(teacherSettings.timeLimit - seconds <= 0){
             leaveQuiz()
