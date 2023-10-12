@@ -276,7 +276,7 @@ function leaveQuiz(){
         }
     }
     var uid = uniqueId()
-    if((hasPassed&&!isPractice) || seconds > 20){
+    if((hasPassed&&!isPractice) || seconds >= 15){
         var result = [uid,myName,type,selectedLevel,seconds,scoreTally[0],scoreTally[1],hasPassed,false,Date.now()]
         saveToLocalStudentResults(result)
         if(!offlineMode){
