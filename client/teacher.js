@@ -15,6 +15,10 @@ function displayRecords(filter,showHidden){
     if(showHidden){
         $("#sortWarning").css("display","block")
         $("#sortWarningText").html("Showing hidden results")
+        $("#getCopyButton").css("display","none")
+    }
+    else {
+        $("#getCopyButton").css("display","block")
     }
     var hiddenResultsCount = 0;
     for(let i = 0; i < studentRecords.length; i++){
@@ -110,12 +114,10 @@ function activateTeacherButtons(){
         if(showingHidden){
             showingHidden = false;
             $("#tableContainer").removeClass("hiddenResults")
-            $("#getCopyButton").css("display","block")
         }
         else {
             showingHidden = true;
             $("#tableContainer").addClass("hiddenResults")
-            $("#getCopyButton").css("display","none")
         }
         displayRecords(currentStudentFilter,showingHidden);
     })
