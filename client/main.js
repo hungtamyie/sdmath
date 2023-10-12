@@ -107,8 +107,8 @@ function changeLevel(amount){
     if(selectedLevel < 1){
         selectedLevel = 1;
     }
-    if(selectedLevel > 8){
-        selectedLevel = 8;
+    if(selectedLevel > 10){
+        selectedLevel = 10;
     }
     $("#levelDisplay").html("Level " + selectedLevel);
 }
