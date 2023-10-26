@@ -11,6 +11,7 @@ app.get('/', (req, res) => {
 app.use(express.static(path.join(__dirname, '..', '/client')))
 
 const cors = require('cors');
+const Servergame = require('./servergame');
 app.use(cors({
     origin: '*'
 }));
@@ -21,6 +22,18 @@ serv.listen(port, (error)=>{
     }
     else {
         console.log('Server is listening on port ' + port)
+        //TESTING
+        games["gr1111"] = new Servergame("gr1111")
+        rooms["r1111"] = {
+            data: {
+                roomCode: "1111",
+                teacherName: "John",
+                percentToPass: 70,
+                numberOfProblems: 60,
+                corrections: true
+            },
+            teacher: "John"
+        }    
     }
 });
 const io = require('socket.io')(serv, {'pingInterval': 2000, 'pingTimeout': 5000});
@@ -93,10 +106,13 @@ io.on("connection", (socket) => {
         socket.emit("roomCreated",data)
         socket.myData.amTeacher = true
         socket.myData.myRoom = roomID
+        socket.myData.myGameRoom = "g" + roomID
         socket.join(roomID)
+        socket.join("g"+roomID)
     })
 
     socket.on("disconnect",function(data){
+        if(games[socket.myData.myGameRoom]) games[socket.myData.myGameRoom].removePlayer(socket.id)
         if(socket.myData.amTeacher == true){
             delete rooms[socket.myData.myRoom]
         }
@@ -108,6 +124,18 @@ io.on("connection", (socket) => {
 
     socket.on("studentResultReceived",function(data){
         socket.to(data.studentID).emit("yourResultReceived", data.dataID)
+    })
+
+    socket.on("requestGameStart",function(){
+        if(socket.myData.amTeacher == true){
+            games["gr1111"].addPlayer(socket.id,socket)
+        }
+    })
+
+    socket.on("gameInfo",function(data){
+        if(games[socket.myData.myGameRoom]){
+            games[socket.myData.myGameRoom].receiveGameInfo(data)
+        }
     })
 
     socket.on("studentJoin",function(data){
@@ -146,11 +174,38 @@ io.on("connection", (socket) => {
         socket.emit("roomJoined",roomData)
         socket.myData.amTeacher = false
         socket.myData.myRoom = roomID
+        socket.myData.myGameRoom = "g"+roomID
+        socket.join(socket.myData.myGameRoom)
+
+        if(games["gr1111"]){
+            //games[data.roomCode].addPlayer(this.id)
+            games["gr1111"].addPlayer(socket.id,socket)
+        }
     })
 })
 
+function sendGameUpdates(){
+    for (const key in games) {
+        if (games.hasOwnProperty(key)) {
+            let game = games[key]
+            let players = game.players
+            for (const pkey in players) {
+                if (players.hasOwnProperty(pkey)) {
+                    let player = players[pkey]
+                    player.socket.emit("gameUpdate",game.toJson())
+                }
+            }
+            game.resetEvents();
+        }
+    }
+}
+
 var rooms = {
 
+}
+
+var games = {
+    
 }
 
 function getActiveRooms() {
@@ -166,22 +221,29 @@ function containsSpecialChars(str) {
 }
 
 //Server tick
-/*
+
 const Utility = require("./utility");
 const utility = new Utility;
 var tickRate = 200;
+var lastUpdateTimestamp = Date.now();
 function serverTick() {
     setTimeout(() => {
         //Delete empty game lobbies
         let gameRoomCount = 0;
-        for (const key in gameRooms) {
-            if (gameRooms.hasOwnProperty(key)) {
+        let delta = (Date.now()-lastUpdateTimestamp)/10;
+        if(delta > 10000){
+            delta = 10000;
+        }
+        lastUpdateTimestamp = Date.now();
+        sendGameUpdates()
+        for (const key in games) {
+            if (games.hasOwnProperty(key)) {
                 gameRoomCount++;
-                if(utility.objLength(gameRooms[key].players) == 0){
-                    delete gameRooms[key];
+                if(utility.objLength(games[key].players) == 0){
+                    //delete games[key];
                 }
                 else {
-                    gameRooms[key].update();
+                    games[key].update(delta)
                 }
             }
         }
@@ -189,10 +251,9 @@ function serverTick() {
             tickRate = 5000;
         }
         else {
-            tickRate = 200;
+            tickRate = 25;
         }
         serverTick(); 
     }, tickRate)
 }
 serverTick();
-*/

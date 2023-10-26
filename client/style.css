@@ -531,3 +531,14 @@ input[type=number] {
     box-shadow: 1rem 3rem 4rem 2rem rgba(0, 0, 0, 0.419);
     margin-top: 7rem;
 }
+
+#canvas {
+    background-color: black;
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    -webkit-user-drag: none !important;
+    -khtml-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+}

@@ -5,6 +5,7 @@ function changeScreen(screen){
     $("#quizFinishScreen").css("display", "none");
     $("#teacherScreen").css("display", "none");
     $("#teacherLoginScreen").css("display", "none");
+    $("#gameScreen").css("display", "none");
     $("#" + screen).css("display", "flex");
 }
 
@@ -19,6 +20,8 @@ window.onload = function(){
     window.setInterval(() => {
         uploadResults()
     }, 6000);
+    startGame();
+    resizeCanvas();
 }
 
 function activateEnterKey(){
@@ -61,6 +64,7 @@ function changeScale(){
     $("html").css("font-size", size + "px")
 }
 
+var gameRunning = false;
 var offlineMode = false;
 var timeLimit = 45
 var selectedQuizType = "Addition"
@@ -199,7 +203,7 @@ function enterPressed(){
                     $("#outputBox").html("<div class='check'></div>"+currentProblem[0]+"-"+currentProblem[1]+"="+(currentProblem[0]-currentProblem[1]))
                 }
                 else {
-                    $("#outputBox").html("<div class='x'></div><span style='color:#D61313'><s>"+currentProblem[0]+"-"+currentProblem[1]+"="+response+"</span></s> "+currentProblem[0]+"-"+currentProblem[1]+"="+(currentProblem[0]-currentProblem[1]))
+                    $("#outputBox").html("<span style='color:#D61313'>"+currentProblem[0]+"-"+currentProblem[1]+"="+response+"</span>&nbsp;&nbsp;&nbsp;&nbsp;"+currentProblem[0]+"-"+currentProblem[1]+"="+(currentProblem[0]-currentProblem[1]))
                 }
             }
         }
@@ -423,9 +427,16 @@ function fancyTimeFormat(duration) {
     return ret;
   }
 
+  var lastTick = Date.now();
   function tick(){
+    var currentTime = Date.now()
+    var delta = (currentTime-lastTick)/10;
+    lastTick = currentTime;
+    if(gameRunning){
+        doGameTick(delta);
+    }
+
     if(appRunning && !isPractice){
-        var currentTime = new Date().getTime();
         var diff = currentTime - startTime;
         var seconds = Math.floor(diff / 1000);
         $("#timeBanner").html((teacherSettings.timeLimit - seconds) + "s")
@@ -433,7 +444,7 @@ function fancyTimeFormat(duration) {
             leaveQuiz()
         }
     }
-    window.setTimeout(tick,50)
+    window.requestAnimationFrame(tick)
   }
 
   const uniqueId = () => {

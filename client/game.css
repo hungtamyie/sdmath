@@ -1,0 +1,43 @@
+.canvasUI {
+    pointer-events: none;
+}
+
+#hpBarOuter{
+    color: white;
+    width: 250em;
+    height: 20em;
+    margin-top: 10em;
+    background-color: rgb(37, 37, 37);
+    box-shadow: 2em 2em 2em rgba(61, 61, 61, 0.432);
+    text-align: left;
+}
+
+#energyBarOuter{
+    color: white;
+    width: 250em;
+    height: 10em;
+    margin-top: 15em;
+    background-color: rgb(37, 37, 37);
+    box-shadow: 2em 2em 2em rgba(61, 61, 61, 0.432);
+    text-align: left;
+}
+
+#hpBarInner {
+    height: 18em;
+    width: 1%;
+    margin-top: 2em;
+    background-color: green;
+    display: inline-block;
+}
+
+#energyBarInner {
+    height: 8em;
+    width: 10%;
+    margin-top: 1em;
+    background-color: blue;
+    display: inline-block;
+}
+
+.normaltext {
+    font-size: 30em;
+}

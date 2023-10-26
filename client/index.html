@@ -10,6 +10,7 @@
     <title>SD Math</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="teacherStyle.css">
+    <link rel="stylesheet" href="game.css">
     <script
     src="https://code.jquery.com/jquery-3.6.4.min.js"
     integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="
@@ -21,6 +22,7 @@
     <script src="problemgenerator.js"></script>
     <script src="teacher.js"></script>
     <script src="localStorage.js"></script>
+    <script src="game.js"></script>
 </head>
 <body>
     <div id="studentBanner">
@@ -123,6 +125,14 @@
             <div id="quizFinishBanner">You passed! Great job!</div>
             <div class="blue_button button noselect" id="quizLeaveButton" onclick="changeScreen('levelSelectScreen')">Next</div>
         </div>
+    </div>
+    <div class="screen" id="gameScreen">
+        <canvas id="canvas" width="500px" height="500px"></canvas>
+        <br>
+        <div class="anchor canvasUI"><div id="canvasUI">
+            <div id="energyBarOuter"><div id="energyBarInner"></div></div>
+            <div id="hpBarOuter"><div id="hpBarInner"></div></div>
+        </div></div>
     </div>
     <div class="screen" id="teacherScreen">
         <div class="content_box" id="activityFeedContentBox">

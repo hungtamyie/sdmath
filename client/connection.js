@@ -11,6 +11,17 @@ socket.on('connect', function(){
         $("#connectionStatus").html("Offline mode")
         $("#connectionStatus").addClass("disconnected")
     }
+
+    //TESTING
+    window.setTimeout(() => {
+        var data = {
+            name: "mdrLOL",
+            roomCode: "1111",
+        }
+        $("#studentName").html(data.name.trim())
+        myName = data.name.trim()
+        socket.emit("studentJoin", data)
+    }, 500);
 });
 socket.on("serverMessage",function(data){
     showServerMessage(data);
@@ -49,6 +60,12 @@ socket.on("roomJoined",function(data){
     }
     showStudentBanner();
     changeScreen("levelSelectScreen");
+    //TESTING
+    changeScreen("gameScreen");
+    gameRunning=true;
+})
+socket.on("gameUpdate",function(data){
+    takeGameUpdate(JSON.parse(data));
 })
 
 var alreadyReceivedResults = {}
@@ -107,3 +124,4 @@ function showServerMessage(message){
         $(this).remove();
     });
 }
+
