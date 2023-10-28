@@ -1152,7 +1152,7 @@ function drawRectangle(x,y,w,h,color){
 }
 
 function drawText(x,y,text){
-    ctx.font = S*2.2 + "em Lilita One";
+    ctx.font = S*1.5 + "em Lilita One";
     ctx.fillStyle="white";
     ctx.textAlign = "center";
     ctx.fillText(text, ctX(x),  ctY(y));
