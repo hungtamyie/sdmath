@@ -6,6 +6,7 @@ function changeScreen(screen){
     $("#teacherScreen").css("display", "none");
     $("#teacherLoginScreen").css("display", "none");
     $("#gameScreen").css("display", "none");
+    $("#gameCreationScreen").css("display", "none");
     $("#" + screen).css("display", "flex");
 }
 
@@ -20,7 +21,7 @@ window.onload = function(){
     window.setInterval(() => {
         uploadResults()
     }, 6000);
-    startGame();
+    setupCanvas();
     resizeCanvas();
 }
 
@@ -64,6 +65,8 @@ function changeScale(){
     $("html").css("font-size", size + "px")
 }
 
+var myMaxAdditionLevel = 0;
+var myMaxSubtractionLevel = 0;
 var gameRunning = false;
 var offlineMode = false;
 var timeLimit = 45
@@ -83,6 +86,16 @@ function changeQuizType(type){
             $("#additionButton").removeClass("deselected");
             selectedQuizType = "Addition";
         }
+        updateTopRight();
+    }
+}
+
+function updateTopRight(){
+    if(selectedQuizType == "Addition"){
+        $("#yourLevelInfo").html("You have passed<br> Level " + myMaxAdditionLevel + " Addition");
+    }
+    else {
+        $("#yourLevelInfo").html("You have passed<br> Level " + myMaxSubtractionLevel + " Subtraction");
     }
 }
 
@@ -95,6 +108,14 @@ function showStudentBanner(){
         $("#connectionStatus").addClass("disconnected")
     }
 
+}
+
+function hideStudentBanner(){
+    $("#studentBanner").css("visibility","hidden")
+}
+
+function reShowStudentBanner(){
+    $("#studentBanner").css("visibility","visible")
 }
 
 function makePossesive(name){
@@ -195,7 +216,8 @@ function enterPressed(){
                     $("#outputBox").html("<div class='check'></div>"+currentProblem[0]+"+"+currentProblem[1]+"="+(currentProblem[0]+currentProblem[1]))
                 }
                 else {
-                    $("#outputBox").html("<div class='x'></div><span style='color:#D61313'><s>"+currentProblem[0]+"+"+currentProblem[1]+"="+response+"</span></s> "+currentProblem[0]+"+"+currentProblem[1]+"="+(currentProblem[0]+currentProblem[1]))
+                    //$("#outputBox").html("<div class='x'></div><span style='color:#D61313'><s>"+currentProblem[0]+"+"+currentProblem[1]+"="+response+"</span></s> "+currentProblem[0]+"+"+currentProblem[1]+"="+(currentProblem[0]+currentProblem[1]))
+                    $("#outputBox").html("<span style='color:#D61313'>"+currentProblem[0]+"+"+currentProblem[1]+"="+response+"</span>&nbsp;&nbsp;&nbsp;&nbsp;"+currentProblem[0]+"+"+currentProblem[1]+"="+(currentProblem[0]+currentProblem[1]))
                 }
             }
             else {
@@ -243,7 +265,7 @@ function leaveQuiz(){
     var levelString = "Level " + selectedLevel
     var hasPassed = true;
     if(!isPractice){hasPassed = (Math.floor((scoreTally[0]/teacherSettings.quizProblems)*100)||0) >= teacherSettings.passingPercentage}
-    changeScreen("quizFinishScreen");
+    if(!gameRunning) changeScreen("quizFinishScreen");
     $("#quizFinishData").html(levelString + "<br>" + timeString + "<br>" + scoreString + "<br>" + percentageString)
     var f = !isPractice?"Test":"Practice"
     $("#quizFinishTitle").html(selectedQuizType + " " + f)
@@ -291,6 +313,9 @@ function leaveQuiz(){
             resultsToSend.push({resultId: uid, result: result, tries: 0})
             uploadResults()
         }
+        if(selectedQuizType == "Addition" && selectedLevel > myMaxAdditionLevel) myMaxAdditionLevel = selectedLevel;
+        else if (selectedQuizType == "Subtraction" && selectedLevel > myMaxSubtractionLevel) myMaxSubtractionLevel = selectedLevel;
+        updateTopRight();
     }
 }
 

@@ -542,3 +542,229 @@ input[type=number] {
     -ms-user-select: none !important;
     user-select: none !important;
 }
+
+.gameDescription {
+    background:white;
+    color: black;
+    margin: 25rem;
+    padding: 15rem;
+    font-size: 20rem;
+    box-shadow: 1rem 3rem 4rem 2rem rgba(0, 0, 0, 0.419);
+    width: 560rem;
+    text-align: left;
+    overflow-y: scroll;
+    height: 300rem;
+}
+
+.launchGameButton {
+    background:#3591E7;
+    margin: 6rem;
+    padding: 15rem;
+    width: 500rem;
+    font-size: 35rem;
+    border-radius: 20rem;
+    margin-top: 10rem;
+    display: inline-block;
+    cursor: pointer;
+    box-shadow: 1rem 3rem 4rem 2rem rgba(0, 0, 0, 0.419);
+}
+
+#gameCreationContentBox {
+    text-align: center;
+}
+
+.cancelGameButton {
+    background:#FF7171;
+    cursor: pointer;
+    margin: 6rem;
+    padding: 15rem;
+    width: 300rem;
+    margin-top:25rem;
+    font-size: 35rem;
+    border-radius: 20rem;
+    display: inline-block;
+    box-shadow: 1rem 3rem 4rem 2rem rgba(0, 0, 0, 0.419);
+}
+
+.buyScreen {
+    width: 600rem;
+    height: 590rem;   
+    background:#E7CD44;
+    z-index: 1000000;
+    pointer-events: all;
+    border-radius: 30rem;
+    text-align: center;
+    position: relative;
+    left: -250rem;
+    display: none;
+}
+
+.shopCategory {
+    width: 300rem;
+    display: inline-block;
+    text-align: left;
+    background-color: #3591E7;
+    border-radius: 15rem;
+    padding: 9rem;
+    font-size: 25rem;
+    height: 45rem;
+    line-height: 45rem;
+    margin-top: 15rem;
+}
+
+.shopDescription {
+    color: black;
+    margin-top: 5rem;
+    font-size: 25rem;
+    padding: 9rem;
+    border-radius: 15rem;
+    background-color: white;
+    width: 260rem;
+    display: inline-block;
+}
+
+.upgradeCircle {
+    width: 15rem;
+    height: 25rem;
+    display: inline-block;
+    background-color: rgb(255, 255, 255);
+    position: relative;
+    top: 3rem;
+    margin-left: 0.1rem;
+    border-radius: 5rem;
+}
+
+.addUpgButton {
+    width: 55rem;
+    height: 55rem;
+    display: inline-block;
+    text-align: center;
+    border-radius: 15rem;
+    background-color: #1CA805;
+    position: relative;
+    top: -1rem;
+    line-height: 55rem;
+    cursor: pointer;
+}
+
+.subUpgButton {
+    width: 55rem;
+    height: 55rem;
+    display: inline-block;
+    text-align: center;
+    border-radius: 15rem;
+    background-color:#FF7171;
+    cursor: pointer;
+    position: relative;
+    top: -1rem;
+    line-height: 55rem;
+}
+
+.weaponBox {
+    font-size: 30rem;
+    width: 500rem;
+    height: 340rem;
+    padding-top: 15rem;
+    background-color: #3591E7;
+    border-radius: 15rem;
+    display: inline-block;
+    margin-top: 10rem;
+}
+
+.weaponSelect {
+    display: inline-block;
+    cursor: pointer;
+}
+
+.weaponSelect>div {
+    display: inline-block;
+    margin-left: 10rem;
+    font-size: 20rem;
+    color: white;
+}
+
+.shotSelected {
+    color: #6de75a;
+}
+
+.weaponContainer {
+    display: inline-block;
+    position: relative;
+    top: 20rem;
+    margin-left: 15rem;
+}
+.weaponContainerA {
+    display: inline-block;
+    position: relative;
+    margin-left: 25rem;
+}
+.weaponbar {
+    width: 400rem;
+    height: 1rem;
+    display: inline-block;
+    background-color: white;
+}
+
+.chooseScreen {
+    position: relative;
+    top: -420rem;
+    height: 380rem;
+    background-color: #E7CD44;
+    width: 520rem;
+    left: 630rem;
+    border-radius: 15rem;
+}
+
+.unselectableWeapon {
+    display: inline-block;
+    cursor: pointer;
+    color: rgb(180, 180, 180);
+}
+.unselectableWeapon>div {
+    display: inline-block;
+    margin-left: 10rem;
+    font-size: 20rem;
+    color:#D20000;
+}
+.upgraded {
+    background-color: rgb(255, 0, 0) !important;
+    box-shadow: 0rem 0rem 2rem 1rem rgba(255, 0, 0, 0.5);
+}
+
+#shopReady {
+    cursor: pointer;
+    width: 200rem;
+    height: 70rem;
+    font-size: 40rem;
+    color: white;
+    box-shadow: 1rem 2rem 4rem 1rem rgba(0, 0, 0, 0.5);
+    background-color: #1CA805;
+    display: inline-block;
+    border-radius: 20rem;
+    margin-top: 15rem;
+    line-height: 70rem;
+}
+
+#holdSpaceMessage {
+    font-size: 15em;
+    position: relative;
+    top: 24em;
+    left: 0.6em;
+    color:#3591E7;
+}
+
+#yourLevelInfo {
+    position: fixed;
+    width: 250rem;
+    height: 50rem;
+    background-color:#3591E7;
+    display: inline-block;
+    border-radius: 28rem;
+    padding: 15rem;
+    font-size: 25rem;
+    padding-bottom: 20rem;
+    margin-top: 15rem;
+    text-align: center;
+    top: 20rem;
+    right: 20rem;
+}

@@ -23,17 +23,7 @@ serv.listen(port, (error)=>{
     else {
         console.log('Server is listening on port ' + port)
         //TESTING
-        games["gr1111"] = new Servergame("gr1111")
-        rooms["r1111"] = {
-            data: {
-                roomCode: "1111",
-                teacherName: "John",
-                percentToPass: 70,
-                numberOfProblems: 60,
-                corrections: true
-            },
-            teacher: "John"
-        }    
+        //games["gr1111"] = new Servergame("gr1111") 
     }
 });
 const io = require('socket.io')(serv, {'pingInterval': 2000, 'pingTimeout': 5000});
@@ -44,15 +34,6 @@ io.on("connection", (socket) => {
     socket.on("createRoom", function(data){
         data.teacherName = data.teacherName.trim()
         data.roomCode = data.roomCode.trim()
-        /*
-        var data = {
-        roomCode: $("#teacherCodeInput").val(),
-        teacherName: $("#teacherNameInput").val(),
-        percentToPass: $("#percentageToPassInput").val(),
-        timeLimit: $("#timeLimitInput").val(),
-        numberOfProblems: $("#numOfProblemsInput").val(),
-        corrections: wantsCorrectionsMidTest,
-    } */
         var regNumeric = /^\d+$/
         if(String(data.roomCode).length != 4){
             socket.emit("serverMessage","Your room code must be 4 digits")
@@ -106,6 +87,7 @@ io.on("connection", (socket) => {
         socket.emit("roomCreated",data)
         socket.myData.amTeacher = true
         socket.myData.myRoom = roomID
+        socket.myData.myName = data.teacherName
         socket.myData.myGameRoom = "g" + roomID
         socket.join(roomID)
         socket.join("g"+roomID)
@@ -126,10 +108,18 @@ io.on("connection", (socket) => {
         socket.to(data.studentID).emit("yourResultReceived", data.dataID)
     })
 
-    socket.on("requestGameStart",function(){
-        if(socket.myData.amTeacher == true){
-            games["gr1111"].addPlayer(socket.id,socket)
+    socket.on("requestGameStart",function(data){
+        if(socket.myData.amTeacher == true && !games[socket.myData.myGameRoom]){
+            games[socket.myData.myGameRoom] = new Servergame(socket.myData.myGameRoom)
+            games[socket.myData.myGameRoom].addPlayer(socket.id,socket.myData.myName,socket)
+            socket.to(socket.myData.myGameRoom).emit("studentGameStarted",data)
+            socket.emit("gameStarted",data)
         }
+    })
+
+    socket.on("requestJoinGame",function(data){
+        games[socket.myData.myGameRoom].addPlayer(socket.id,socket.myData.myName,socket)
+        socket.emit("gameStarted",data)
     })
 
     socket.on("gameInfo",function(data){
@@ -174,13 +164,9 @@ io.on("connection", (socket) => {
         socket.emit("roomJoined",roomData)
         socket.myData.amTeacher = false
         socket.myData.myRoom = roomID
+        socket.myData.myName = data.name
         socket.myData.myGameRoom = "g"+roomID
         socket.join(socket.myData.myGameRoom)
-
-        if(games["gr1111"]){
-            //games[data.roomCode].addPlayer(this.id)
-            games["gr1111"].addPlayer(socket.id,socket)
-        }
     })
 })
 
@@ -231,8 +217,8 @@ function serverTick() {
         //Delete empty game lobbies
         let gameRoomCount = 0;
         let delta = (Date.now()-lastUpdateTimestamp)/10;
-        if(delta > 10000){
-            delta = 10000;
+        if(delta > 6){
+            delta = 6;
         }
         lastUpdateTimestamp = Date.now();
         sendGameUpdates()
@@ -240,7 +226,7 @@ function serverTick() {
             if (games.hasOwnProperty(key)) {
                 gameRoomCount++;
                 if(utility.objLength(games[key].players) == 0){
-                    //delete games[key];
+                    delete games[key];
                 }
                 else {
                     games[key].update(delta)

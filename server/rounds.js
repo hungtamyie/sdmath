@@ -1,69 +1,119 @@
 class Rounds {
     constructor(){
         this.data = [
-            [
-                {   
-                    delay: 0,
-                    t0: 0.5,
-                    t1: 0.5,
-                    t2: 1,
-                    t4: 1
-                },
-                {   
-                    delay: 20,
-                    t0: 1,
-                    t2: 0,
-                    t3: 0.00000001,
-                    t4: 1,
-                },
-                {   
-                    delay: 500,
-                    t0: 1,
-                },
-            ],
-            [
-                {   
-                    delay: 0,
-                    t0: 1,
-                    t1: 3,
-                },
-                {   
-                    delay: 10000000000000000000,
-                    t0: 5,
-                },
-            ],
+            {   
+                incrementsLevel: true,
+                delay: 4000,
+                hpMod: 0.5,
+                t0: 0.5,
+            },
+            {   
+                delay: 2000,
+                hpMod: 0.5,
+                t0: 1,
+            },
+            {   
+                incrementsLevel: true,
+                delay: 2000,
+                hpMod: 0.6,
+                t0: 0.5,
+                t1: 0.25,
+            },
+            {   
+                delay: 1000,
+                hpMod: 0.7,
+                t0: 1,
+                t2: 0.3,
+            },
+            { 
+                incrementsLevel: true,  
+                delay: 99999,
+                hpMod: 0.8,
+                t1: 0.7,
+            },
+            {   
+                delay: 1000,
+                hpMod: 0.9,
+                t0: 0.6,
+                t1: 0.2,
+                t2: 0.4
+            },
+            {   
+                incrementsLevel: true,
+                delay: 99999,
+                hpMod: 1,
+                t0: 0.3,
+                t2: 0.5,
+                t3: 0.00000001,
+            },
+            {   
+                delay: 1000,
+                t0: 0.5,
+                t1: 0.5,
+                t2: 0.2,
+            },
+            {   
+                incrementsLevel: true,
+                delay: 10000000000000,
+                t0: 0.2,
+                t1: 0.2,
+                t4: 0.3,
+            },
+            {   
+                delay: 1000,
+                t0: 0.5,
+                t1: 0.5,
+                t2: 0.2,
+            },
+            {   
+                incrementsLevel: true,
+                delay: 10000000,
+                t0: 0.5,
+                t1: 0.5,
+                t2: 0.2,
+                t3: 0.3,
+                t4: 0.5,
+            },
+            {   
+                delay: 3000,
+                t1: 0.5,
+                t3: 0.6,
+                t4: 0.9,
+            },
+            {   
+                delay: 4000,
+                t0: 0.5,
+                t1: 1,
+                hpMod: 2,
+                t3: 0.6,
+                t4: 0.9,
+            },
+            {   
+                delay: 1000000000,
+                hpMod: 3,
+                t1: 1,
+                t3: 1,
+                t4: 1,
+            },
         ]
-        this.currentRound = 0;
         this.waveTimer = 0;
         this.currentWave = 0;
-        this.waitingForNoEnemies = false;
+        this.level;
     }
 
-    updateWaveSpawn(delta, noEnemies){
+    updateWaveSpawn(delta, noEnemies, tooManyEnemies){
         var stuffToReturn=false;
         this.waveTimer+=delta;
-        var waveDelay = this.data[this.currentRound][this.currentWave].delay;
-        var numberOfWaves = this.data[this.currentRound].length
-        if(this.waveTimer > waveDelay && this.currentWave < numberOfWaves && !this.waitingForNoEnemies){
+        if(!this.data[this.currentWave]) return false;
+        if(tooManyEnemies) return false;
+        var waveDelay = this.data[this.currentWave].delay;
+        if(this.waveTimer > waveDelay || noEnemies){
             this.waveTimer = 0;
-            stuffToReturn = this.data[this.currentRound][this.currentWave]
-            if(!this.waitingForNoEnemies && this.currentWave < numberOfWaves - 1){
-                this.currentWave++;
-                if(this.currentWave == numberOfWaves - 1){
-                    this.waitingForNoEnemies = true;
-                }
-            }
-        }
-        if(this.waitingForNoEnemies && noEnemies){
-            this.currentWave = 0;
-            this.waveTimer = 0;
-            this.currentRound++;
+            stuffToReturn = this.data[this.currentWave]
+            console.log(stuffToReturn)
+            this.currentWave++;
         }
         return stuffToReturn;
-    }
-
-    getCurrentRound(){
-        return this.currentRound;
     }
 }
 module.exports = Rounds;

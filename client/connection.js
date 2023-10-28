@@ -1,6 +1,7 @@
 var socket = io();
 var myName;
 var myRoom;
+var amTeacher = false;
 
 socket.on('connect', function(){
     if(teacherSettings.teacherName){
@@ -11,17 +12,6 @@ socket.on('connect', function(){
         $("#connectionStatus").html("Offline mode")
         $("#connectionStatus").addClass("disconnected")
     }
-
-    //TESTING
-    window.setTimeout(() => {
-        var data = {
-            name: "mdrLOL",
-            roomCode: "1111",
-        }
-        $("#studentName").html(data.name.trim())
-        myName = data.name.trim()
-        socket.emit("studentJoin", data)
-    }, 500);
 });
 socket.on("serverMessage",function(data){
     showServerMessage(data);
@@ -41,7 +31,10 @@ socket.on("roomCreated",function(data){
     saveRoomSettings(data)
     showStudentBanner()
     $("#roomCodeBox").html("#" + data.roomCode)
+    myRoom = data.roomCode;
+    myName = teacherSettings.teacherName;
     changeScreen("teacherScreen")
+    amTeacher = true;
 })
 socket.on("roomJoined",function(data){
     teacherSettings.quizProblems = data.numberOfProblems;
@@ -60,12 +53,16 @@ socket.on("roomJoined",function(data){
     }
     showStudentBanner();
     changeScreen("levelSelectScreen");
-    //TESTING
-    changeScreen("gameScreen");
-    gameRunning=true;
 })
 socket.on("gameUpdate",function(data){
     takeGameUpdate(JSON.parse(data));
+})
+socket.on("gameStarted",function(data){
+    console.log(data)
+    startGame(data);
+})
+socket.on("studentGameStarted", function(data){
+    socket.emit("requestJoinGame",data)
 })
 
 var alreadyReceivedResults = {}
@@ -101,7 +98,9 @@ function uploadResult(result){
     socket.emit("newResult", result)
 }
 
-
+function requestGameLaunch(type){
+    socket.emit("requestGameStart", type)
+}
 
 function tryStudentJoin(){
     var data = {

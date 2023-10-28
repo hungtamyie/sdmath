@@ -1,8 +1,46 @@
 var canvas;
 var ctx; 
 
-function startGame(){
+function startGame(type){
+    var level = 0;
+    if(type == "Addition"){
+        level = myMaxAdditionLevel
+    }
+    else {
+        level = myMaxSubtractionLevel
+    }
     changeScreen("gameScreen")
+    $("#shotSelect0").css("background-position", ("-0em"))
+    $("#shotSelect1").css("display", "none")
+    $("#shotSelect2").css("display", "none")
+    resetStats()
+
+    myStats.maxEnergy += level*2;
+    if(level == 8 || level == 9 || level == 7){
+        myStats.maxEnergy += level*2
+    }
+    myStats.energy = myStats.maxEnergy/3;
+    myStats.energyGain += level/2.5;
+    if(level == 8 || level == 9 || level == 7){
+        myStats.energyGain += level/5
+    }
+    myStats.mathLevel = level
+    if(level == 0)myStats.mathLevel = 1
+    myStats.mathType = type
+    if(!amTeacher){
+        setupShop(level)
+    }else {
+        myStats.amDead = true;
+        $("#holdSpaceMessage").css("visibility", "hidden")
+    }
+    getMoreGameProblems()
+    selectShot(0)
+    shadowData={}
+    gameRunning=true;
+    hideStudentBanner();
+}
+
+function setupCanvas(){
     canvas = document.getElementById("canvas")
     ctx = canvas.getContext("2d")
     canvas.addEventListener('contextmenu', event => event.preventDefault());
@@ -12,9 +50,8 @@ function startGame(){
         const y = e.clientY - rect.top
         shoot(ictX(x),ictY(y))
     }
+    window.onresize = resizeCanvas;
 }
-
-window.onresize = resizeCanvas;
 
 var S = 1
 function resizeCanvas(){
@@ -36,23 +73,36 @@ function resizeCanvas(){
 
 var myEntities = {}
 var myPos = {
-    x: 500+1000*Math.random(),
-    y: 500+1000*Math.random(),
+    x: 0,
+    y: 0,
 }
+var myProblems = [];
+var myCurrentAnswer = "";
 var myStats = {
     speed: 0.8,
-    health: 100,
-    maxHealth: 100,
-    energy: 100,
-    maxEnergy: 100,
+    health: 10,
+    maxHealth: 10,
+    energy: 10,
+    maxEnergy: 10,
     amDead: false,
     touchHitCooldown: 0,
+    damageModifier: 4,
     shieldLevel: 0,
     shieldDeploying: 0,
-    gunType: 5, 
+    mathLevel: 2,
+    respawnCount: 0,
+    respawnProblems: 0,
+    mathType: "Subtraction",
+    gunType: 1, 
+    gunA: 0,
+    gunB: false,
+    gunC: false,
+    energyGain: 1.5,
+    invincibility: 300,
+    gameEndingTimer: 1000,
 }
 var myUpgrades = {
-    shield: 2,
+    shield: 0,
 }
 var camera = {
     x: 0,
@@ -61,19 +111,73 @@ var camera = {
 }
 var timeSinceLastUpdate = 0;
 
+function resetStats(){
+    myPos = {
+        x: Math.random()*2500,
+        y: Math.random()*2500,
+    }
+    myStats = {
+        speed: 0.8,
+        health: 10,
+        maxHealth: 10,
+        energy: 10,
+        maxEnergy: 10,
+        amDead: false,
+        touchHitCooldown: 0,
+        damageModifier: 1,
+        shieldLevel: 0,
+        shieldDeploying: 0,
+        mathLevel: 2,
+        respawnCount: 0,
+        respawnProblems: 0,
+        mathType: "Subtraction",
+        gunType: 1, 
+        gunA: 0,
+        gunB: false,
+        gunC: false,
+        energyGain: 1,
+        invincibility: 300,
+        gameEndingTimer: 1000,
+    }
+    myUpgrades = {
+        shield: 0,
+    }
+}
+
 var keys = {
 
 }
 document.onkeydown = function(ev){
+    let key = ev.key.toLowerCase()
     keys[ev.key.toLowerCase()]=true;
+    var mathKeys = ["1","2","3","4","5","6","7","8","9","0","backspace","enter","delete"]
+    if(mathKeys.includes(ev.key.toLowerCase())){
+        doGameMath(ev.key.toLowerCase())
+    }
+    if(key=="z"){selectShot(0)}
+    if(key=="x"){selectShot(1)}
+    if(key=="c"){selectShot(2)}
 }
 document.onkeyup = function(ev){
     keys[ev.key.toLowerCase()]=false;
+}
+var respawnMapping = [1,5,10,30,60,100,300]
+
+function getMoreGameProblems(){
+    myProblems = myProblems.concat(generateProblems(myStats.mathType, "level"+(myStats.mathLevel), 50))
+}
+function respawn(){
+    myStats.amDead = false;
+    myStats.energy = myStats.maxEnergy/3;
+    myStats.health = myStats.maxHealth;
+    myStats.invincibility = 300;
+    selectShot(0);
 }
 
 function doGameTick(delta){
     timeSinceLastUpdate+=delta;
     if(timeSinceLastUpdate > 10 && myRoom){
+        timeSinceLastUpdate = 0;
         gameInformation.push(["STATEUPDATE",socket.id,{x: myPos.x, y: myPos.y, health: myStats.health, maxHealth: myStats.maxHealth, energy: myStats.energy, maxEnergy: myStats.maxEnergy, dead: myStats.amDead, shieldLevel: myStats.shieldLevel}])
         socket.emit("gameInfo",gameInformation)
         gameInformation=[];
@@ -92,6 +196,7 @@ function doGameTick(delta){
     updateBulletQueue(delta)
     drawAndUpdateLasers(delta)
     drawHpBars()
+    drawPlayerNames()
 }
 
 var gameInformation = [
@@ -100,13 +205,16 @@ var gameInformation = [
 
 function drawMe(){
     if(myStats.amDead) return;
+    ctx.globalAlpha = 1;
+    if(myStats.invincibility > 0) ctx.globalAlpha = 0.2;
     drawCircle(myPos.x,myPos.y,10,"aqua")
+    ctx.globalAlpha = 1;
 }
 
 function updateMe(delta){
     var dirVector = [0,0]
     var speedMod = 1
-    if(keys["shift"] && myStats.energy > 0 && myStats.shieldLevel == 0){speedMod=2.5}
+    if(keys["shift"] && myStats.energy > 0 && myStats.shieldLevel == 0){speedMod=1.8}
     if(keys["a"]||keys["arrowleft"]){dirVector[0]+=-1}
     if(keys["d"]||keys["arrowright"]){dirVector[0]+=1}
     if(keys["w"]||keys["arrowup"]){dirVector[1]+=-1}
@@ -120,8 +228,8 @@ function updateMe(delta){
         myPos.y += dirVector[1]*myStats.speed*delta*speedMod
     }
     else {
-        myPos.x += dirVector[0]*5*delta
-        myPos.y += dirVector[1]*5*delta
+        myPos.x += dirVector[0]*7*delta*((6-camera.zoom)/3)
+        myPos.y += dirVector[1]*7*delta*((6-camera.zoom)/3)
     }
 
     if(myStats.amDead){
@@ -168,6 +276,27 @@ function updateMe(delta){
             nextShot = false;
         }
     }
+    myStats.invincibility -= delta;
+    if(myStats.invincibility < 0) myStats.invincibility = 0
+    myStats.submissionTimer -= delta;
+    if(myStats.submissionTimer < 0) myStats.submissionTimer = 0
+    if(myStats.gameOver){
+        myStats.gameEndingTimer -= delta;
+        if(myStats.gameEndingTimer <= 0){
+            endGame()
+        }
+    }
+}
+
+function endGame(){
+    if(amTeacher){
+        changeScreen("teacherScreen")
+    }
+    else {
+        changeScreen("levelSelectScreen");
+    }
+    gameRunning = false;
+    reShowStudentBanner()
 }
 
 function trackCamera(){
@@ -182,6 +311,7 @@ var currentGameData={
     bullets: {},
     enemies: {},
     myBullets: [],
+    wave: 0,
 }
 var particles=[
 
@@ -198,13 +328,23 @@ function newParticle(type,x,y,vx,vy){
         particles.push({x: x, y: y, vx: -1.5, vy: 0, startSize: 7, endSize: 1, time: 30, fade: true, curTime: 30, shape: "circle", color: "yellow"})
         particles.push({x: x, y: y, vx: 0, vy: 1.5, startSize: 7, endSize: 1, time: 30, fade: true, curTime: 30, shape: "circle", color: "yellow"})
         particles.push({x: x, y: y, vx: 0, vy: -1.5, startSize: 7, endSize: 1, time: 30, fade: true, curTime: 30, shape: "circle", color: "yellow"})
-        particles.push({x: x, y: y, vx: 0, vy: -1.5, startSize: 15, endSize: 1, time: 20, fade: true, curTime: 20, shape: "circle", color: "yellow", outerColor: "yellow"})
+        particles.push({x: x, y: y, vx: 0, vy: 0, startSize: 15, endSize: 1, time: 20, fade: true, curTime: 20, shape: "circle", color: "yellow", outerColor: "yellow"})
+    }
+    if(type == "enemyexplode"){
+        particles.push({x: x, y: y, vx: 1.5, vy: 1.5, startSize: 7, endSize: 1, time: 30, fade: true, curTime: 30, shape: "circle", color: "red"})
+        particles.push({x: x, y: y, vx: -1.5, vy: 1.5, startSize: 7, endSize: 1, time: 30, fade: true, curTime: 30, shape: "circle", color: "red"})
+        particles.push({x: x, y: y, vx: -1.5, vy: -1.5, startSize: 7, endSize: 1, time: 30, fade: true, curTime: 30, shape: "circle", color: "red"})
+        particles.push({x: x, y: y, vx: 1.5, vy: -1.5, startSize: 7, endSize: 1, time: 30, fade: true, curTime: 30, shape: "circle", color: "red"})
+        particles.push({x: x, y: y, vx: 0, vy: 0, startSize: 25, endSize: 1, time: 20, fade: false, curTime: 20, shape: "circle", color: "white", outerColor: "red"})
     }
     if(type == "laserend"){
         particles.push({x: x, y: y, startSize: 5, endSize: 15, time: 15, fade: true, curTime: 15, shape: "circle", color: "red"})
     }
     if(type == "basicshot"){
         particles.push({x: x, y: y, vx: vx, vy: vy, startSize: 5, endSize: 15, time: 15, fade: false, curTime: 15, shape: "circle", color: "white", outerColor: "magenta"})
+    }
+    if(type == "playerenergy"){
+        particles.push({x: x, y: y, startSize: 35, endSize: 5, time: 25, fade: true, curTime: 25, shape: "circle", color: "blue", outerColor: "rgba(0,0,255,0.5)"})
     }
     if(type == "healthshot"){
         particles.push({x: x, y: y, vx: vx, vy: vy, startSize: 5, endSize: 15, time: 15, fade: false, curTime: 15, shape: "circle", color: "white", outerColor: "#00ff4c"})
@@ -285,6 +425,11 @@ function takeGameUpdate(data){
             }
         }
     }
+    if(data.gameOver){
+        myStats.amDead = true;
+        myStats.gameOver = true;
+        myCurrentAnswer = "";
+    }
     currentGameData.enemies = {}
     lob (data.enemies, (enemy)=>{
         currentGameData.enemies[enemy.id] = enemy
@@ -308,8 +453,14 @@ function takeGameUpdate(data){
         if(event[0] == "PLAYERDAMAGE"){
             newParticle(event[2].type, event[2].x, event[2].y)
         }
+        if(event[0] == "PLAYERENERGY"){
+            newParticle(event[2].type, event[2].x, event[2].y)
+        }
         if(event[0] == "ROCKETEXPLODE"){
             newParticle("rocketexplode", event[2].x, event[2].y)
+        }
+        if(event[0] == "ENEMYEXPLODE"){
+            newParticle("enemyexplode", event[2].x, event[2].y)
         }
         if(event[0] == "LASERFIRED"){
             //newLaser(event[2])
@@ -317,6 +468,8 @@ function takeGameUpdate(data){
             lasers.push(event[2])
         }
     }
+    currentGameData.wave = data.wave;
+    currentGameData.alivePlayerCount = data.alivePlayerCount;
 }
 
 var lasers = []
@@ -352,6 +505,152 @@ function updateUI(){
     $("#energyBarInner").css("width", energyBarWidth*(myStats.energy/myStats.maxEnergy)+"em");
     $("#hpBarInner").css("width", healthBarWidth*(myStats.health/myStats.maxHealth)+"em");
     $("#hpBarInner").css("background",  getColor(myStats.health/myStats.maxHealth))
+    
+    $("#waveNumber").html("Wave " + currentGameData.wave)
+    if(myStats.amDead){
+        $("#energyBarInner").css("width", "0em");
+        var ressurectionPercent = 1 - (myStats.respawnProblems/respawnMapping[myStats.respawnCount]);
+        if(ressurectionPercent < 0) ressurectionPercent = 0
+        if(ressurectionPercent > 1) ressurectionPercent = 1
+        ressurectionPercent = (healthBarWidth*ressurectionPercent)+"em"
+        $("#hpBarInner").css("width", ressurectionPercent);
+        if(!amTeacher){
+            ctx.fillStyle = "white"
+            ctx.beginPath();
+            ctx.arc(canvas.width/2,canvas.height/2,3*S,0,Math.PI*2,false);
+            ctx.fill()
+        }
+    }
+    $("#mathBoxAnswer").css("opacity", myStats.submissionTimer/100)
+    $("#playerCount").html("Players alive: " + (currentGameData.alivePlayerCount||"0"))
+    if(myStats.gameOver){
+        $("#gameOverMessage").css("visibility","visible")
+    }
+    else {
+        $("#gameOverMessage").css("visibility","hidden")
+    }
+    updateMathBox()
+    updateShopText()
+
+    if(amTeacher){
+        $("#energyBarOuter").css("visibility", "hidden");
+        $("#hpBarOuter").css("visibility", "hidden");
+        $("#mathBox").css("visibility","hidden");
+        $("#mathBoxAnswer").css("visibility","hidden");
+        $("#shotSelect0").css("display", "none")
+        $("#shotSelect1").css("display", "none")
+        $("#shotSelect2").css("display", "none")
+    }
+}
+
+function updateMathBox(){
+    if(myStats.mathType == "Addition"){
+        $("#mathBox").html(myProblems[0][0] + " + " + myProblems[0][1] + " = " + myCurrentAnswer)
+    }
+    else {
+        $("#mathBox").html( myProblems[0][0] + " - " + myProblems[0][1] + " = " + myCurrentAnswer)
+    }
+    if((!myStats.amDead && (myStats.energy == myStats.maxEnergy || myStats.shieldLevel != 0)) || myStats.gameOver){
+        $("#mathBox").html("")
+        myCurrentAnswer = "";
+    }
+}
+
+function doGameMath(symbol){
+    if(symbol != "enter" && symbol != "delete" && symbol != "backspace" && myCurrentAnswer.length < 3){
+        myCurrentAnswer += symbol
+    }
+    if(symbol == "backspace"){
+        myCurrentAnswer=myCurrentAnswer.slice(0,-1)
+    }
+    if(symbol == "delete"){
+        myCurrentAnswer=""
+    }
+    if(symbol == "enter" && myCurrentAnswer != ""){
+        if(!myStats.amDead){
+            if(myStats.energy < myStats.maxEnergy){
+                if(myStats.mathType == "Addition"){
+                    if(myProblems[0][0] + myProblems[0][1] == Number(myCurrentAnswer)){
+                        gainEnergy()
+                        gameInformation.push(["PLAYERENERGY",socket.id,{x: myPos.x, y: myPos.y, type: "playerenergy"}])
+                        $("#mathBoxAnswer").html("Correct!")
+                        $("#mathBoxAnswer").css("color", "#1CA805")
+                    }
+                    else {
+                        loseEnergy()
+                        //takeDamage(0.5)
+                        gameInformation.push(["PLAYERDAMAGE",socket.id,{x: myPos.x, y: myPos.y, type: "playerdamage"}])
+                        $("#mathBoxAnswer").html("Oops!")
+                        $("#mathBoxAnswer").css("color", "#D20000")
+                    }
+                }
+                if(myStats.mathType == "Subtraction"){
+                    if(myProblems[0][0] - myProblems[0][1] == Number(myCurrentAnswer)){
+                        gainEnergy()
+                        gameInformation.push(["PLAYERENERGY",socket.id,{x: myPos.x, y: myPos.y, type: "playerenergy"}])
+                        $("#mathBoxAnswer").html("Correct!")
+                        $("#mathBoxAnswer").css("color", "#1CA805")
+                    }
+                    else {
+                        loseEnergy()
+                        //takeDamage(0.5)
+                        gameInformation.push(["PLAYERDAMAGE",socket.id,{x: myPos.x, y: myPos.y, type: "playerdamage"}])
+                        $("#mathBoxAnswer").html("Oops!")
+                        $("#mathBoxAnswer").css("color", "#D20000")
+                    }
+                }
+            }
+        }
+        else {
+            if(myStats.mathType == "Addition"){
+                if(myProblems[0][0] + myProblems[0][1] == Number(myCurrentAnswer)){
+                    myStats.respawnProblems -= 1;
+                    $("#mathBoxAnswer").html("Correct!")
+                    $("#mathBoxAnswer").css("color", "#1CA805")
+                }
+                else {
+                    myStats.respawnProblems += 3;
+                    if(myStats.respawnProblems > respawnMapping[myStats.respawnCount]){myStats.respawnProblems = respawnMapping[myStats.respawnCount]}
+                    $("#mathBoxAnswer").html("Oops!")
+                    $("#mathBoxAnswer").css("color", "#D20000")
+                }
+            }
+            if(myStats.mathType == "Subtraction"){
+                if(myProblems[0][0] - myProblems[0][1] == Number(myCurrentAnswer)){
+                    myStats.respawnProblems -= 1;
+                    $("#mathBoxAnswer").html("Correct!")
+                    $("#mathBoxAnswer").css("color", "#1CA805")
+                }
+                else {
+                    myStats.respawnProblems += 3;
+                    if(myStats.respawnProblems > respawnMapping[myStats.respawnCount]){myStats.respawnProblems = respawnMapping[myStats.respawnCount]}
+                    $("#mathBoxAnswer").html("Oops!")
+                    $("#mathBoxAnswer").css("color", "#D20000")
+                }
+            }
+            if(myStats.respawnProblems == 0){
+                respawn();
+            }
+        }
+        myStats.submissionTimer = 100;
+        myProblems.splice(0,1)
+        if(myProblems.length < 5){getMoreGameProblems()}
+        myCurrentAnswer=""
+    }
+}
+
+function gainEnergy(){
+    myStats.energy += myStats.energyGain;
+    if(myStats.energy > myStats.maxEnergy){
+        myStats.energy = myStats.maxEnergy;
+    }
+}
+
+function loseEnergy(){
+    myStats.energy -= myStats.energyGain*2;
+    if(myStats.energy < 0){
+        myStats.energy = 0;
+    }
 }
 
 function getColor(value){
@@ -379,12 +678,14 @@ function drawOtherPlayers(delta){
                 var posXChange = player.x - pastPlayer.x;
                 var posYChange = player.y - pastPlayer.y;
                 var distance = Math.sqrt(posXChange**2+posYChange**2)||1;
-                pastPlayer.x += (posXChange/Math.sqrt(distance))/2*delta;
-                pastPlayer.y += (posYChange/Math.sqrt(distance))/2*delta;
+                pastPlayer.x += (posXChange/Math.sqrt(distance))/4*delta;
+                pastPlayer.y += (posYChange/Math.sqrt(distance))/4*delta;
                 drawCircle(pastPlayer.x,pastPlayer.y,10,"blue")
+                drawText(pastPlayer.x,pastPlayer.y-27,player.name)
             }
             else {
                 drawCircle(player.x,player.y,10,"blue")
+                drawText(player.x,player.y-27,player.name)
             }
     
             //Collide with player
@@ -398,6 +699,20 @@ function drawOtherPlayers(delta){
         }
     })
 }
+function drawPlayerNames(){
+    lob(currentGameData.players, function(player){
+        if(!player.dead){
+            if(shadowData[player.id]){
+                var pastPlayer = shadowData[player.id];
+                drawText(pastPlayer.x,pastPlayer.y-27,player.name)
+            }
+            else {
+                drawText(player.x,player.y-27,player.name)
+            }
+        }
+    })
+    if(!myStats.amDead) drawText(myPos.x,myPos.y-27,myName)
+}
 function drawEnemies(delta){
     lob(currentGameData.enemies, function(enemy){
         if(shadowData[enemy.id]){
@@ -405,8 +720,8 @@ function drawEnemies(delta){
             var posXChange = enemy.x - pastEnemy.x;
             var posYChange = enemy.y - pastEnemy.y;
             var distance = Math.sqrt(posXChange**2+posYChange**2)||1;
-            pastEnemy.x += (posXChange/Math.sqrt(distance))/2*delta;
-            pastEnemy.y += (posYChange/Math.sqrt(distance))/2*delta;
+            pastEnemy.x += (posXChange/Math.sqrt(distance))/4*delta;
+            pastEnemy.y += (posYChange/Math.sqrt(distance))/4*delta;
             drawEnemy(pastEnemy.x,pastEnemy.y,enemy)
         }
         else {
@@ -432,6 +747,7 @@ function drawEnemies(delta){
 }
 
 function takeDamage(dmg){
+    if(myStats.invincibility > 0) dmg = 0.5;
     myStats.health -= dmg;
     if(myStats.health <= 0){
         myStats.amDead = true;
@@ -441,6 +757,8 @@ function takeDamage(dmg){
         keys["a"]=false;
         keys["s"]=false;
         keys["d"]=false;
+        myStats.respawnCount++;
+        myStats.respawnProblems = respawnMapping[myStats.respawnCount];
     }
     if(myStats.health > myStats.maxHealth){
         myStats.health = myStats.maxHealth
@@ -584,7 +902,7 @@ function drawAndUpdateBullets(realdelta){
                 if(dist < shieldSize + 1){
                     gameInformation.push(["BULLETDEATH",socket.id,{id: bullet.id, x: bullet.dX, y: bullet.dY, type: bullet.explosionClass}])
                     if(bullet.shieldDamage){
-                        myStats.energy -= bullet.shieldDamage
+                        myStats.energy -= bullet.shieldDamage/myStats.shieldLevel
                         if(myStats.energy < 0){myStats.energy = 0}
                     }
                     deleteBullet(bullet.id)
@@ -673,7 +991,7 @@ function shoot(x,y){
 
     if(myStats.gunType == 0){
         createBullet(vX,vY)
-        myShotCooldown = 15
+        myShotCooldown = 25
     }
     if(myStats.gunType == 1){
         var shotVector = [vX, vY]
@@ -682,7 +1000,7 @@ function shoot(x,y){
         createBullet(rightVector[0],rightVector[1])
         var leftVector = rotateVector(shotVector, -15)
         createBullet(leftVector[0],leftVector[1])
-        myShotCooldown = 20
+        myShotCooldown = 35
     }
     if(myStats.gunType == 2){
         var shotVector = [vX, vY]
@@ -691,7 +1009,7 @@ function shoot(x,y){
         bulletQueue.push([10, rightVector[0], rightVector[1]])
         var leftVector = rotateVector(shotVector, -0.2-2*Math.random())
         bulletQueue.push([20, leftVector[0], leftVector[1]])
-        myShotCooldown = 30
+        myShotCooldown = 35
     }
     if(myStats.gunType == 3){
         createBullet(vX, vY, "splash")
@@ -707,7 +1025,7 @@ function shoot(x,y){
     }
     drainEnergy(shotCosts[myStats.gunType])
 }
-var shotCosts = [1, 1.5, 1.5, 4, 0.5, 8]
+var shotCosts = [0.5, 1, 1, 2.5, 0.3, 4]
 
 function drainEnergy(energy){
     myStats.energy -= energy
@@ -733,18 +1051,18 @@ function getDistance(a,b){
 //Creates a bullet! vX and vY represent a unit vector
 function createBullet(vX, vY,type){
     if(myStats.amDead) return;
-    var myBullet = {id: uniqueId(), x: myPos.x, y: myPos.y, launcherId: socket.id, vX: vX, vY: vY, spawnTime: Date.now(), size: 2, speed: 3, damage: 4, team: "CLASS", explosionClass: "basic", launchEffect: "basicshot"}
+    var myBullet = {id: uniqueId(), x: myPos.x, y: myPos.y, launcherId: socket.id, vX: vX, vY: vY, spawnTime: Date.now(), size: 2, speed: 3, damage: 4 * myStats.damageModifier, team: "CLASS", explosionClass: "basic", launchEffect: "basicshot"}
     if(type == "splash"){
-        myBullet = {id: uniqueId(), x: myPos.x, y: myPos.y, launcherId: socket.id, vX: vX, vY: vY, spawnTime: Date.now(), size: 20, speed: 2.6, damage: 8, splash: true, flashes: true, team: "CLASS", explosionClass: "hugeexplosion", launchEffect: "splashshot"}
+        myBullet = {id: uniqueId(), x: myPos.x, y: myPos.y, launcherId: socket.id, vX: vX, vY: vY, spawnTime: Date.now(), size: 20, speed: 2.6, damage: 8 * myStats.damageModifier, splash: true, flashes: true, team: "CLASS", explosionClass: "hugeexplosion", launchEffect: "splashshot"}
     }
     if(type == "health"){
-        myBullet = {id: uniqueId(), x: myPos.x, y: myPos.y, launcherId: socket.id, vX: vX, vY: vY, spawnTime: Date.now(), size: 7, speed: 2.5, damage: -0.5, health: true, team: "CLASS", explosionClass: "healthexplosion", launchEffect: "healthshot"}
+        myBullet = {id: uniqueId(), x: myPos.x, y: myPos.y, launcherId: socket.id, vX: vX, vY: vY, spawnTime: Date.now(), size: 7, speed: 2.5, damage: -0.5 * myStats.damageModifier, health: true, team: "CLASS", explosionClass: "healthexplosion", launchEffect: "healthshot"}
     }
     if(type == "rocket"){
         myBullet.isRocket = true;
         myBullet.size = 4;
         myBullet.rocketCooldown = 0;
-        myBullet.damage = 10;
+        myBullet.damage = 10 * myStats.damageModifier;
         myBullet.launchEffect = "rocketshot";
     }
     gameInformation.push(["NEWBULLET",socket.id,myBullet])
@@ -762,6 +1080,27 @@ function deleteBullet(bulletId){
                 break
             }   
         }
+    }
+}
+
+function selectShot(shotNumber){
+    if(shotNumber == 0){
+        myStats.gunType = myStats.gunA
+        $("#shotSelect2").addClass("unselectedShot")
+        $("#shotSelect1").addClass("unselectedShot")
+        $("#shotSelect0").removeClass("unselectedShot")
+    }
+    if(shotNumber == 1 && myStats.gunB){
+        myStats.gunType = myStats.gunB
+        $("#shotSelect2").addClass("unselectedShot")
+        $("#shotSelect0").addClass("unselectedShot")
+        $("#shotSelect1").removeClass("unselectedShot")
+    }
+    if(shotNumber == 2 && myStats.gunC){
+        myStats.gunType = myStats.gunC
+        $("#shotSelect0").addClass("unselectedShot")
+        $("#shotSelect1").addClass("unselectedShot")
+        $("#shotSelect2").removeClass("unselectedShot")
     }
 }
 
@@ -809,6 +1148,13 @@ function drawLine(sX, sY, eX, eY, thickness, color){
 function drawRectangle(x,y,w,h,color){
     ctx.fillStyle=color;
     ctx.fillRect(ctX(x),ctY(y),ctS(w),ctS(h))
+}
+
+function drawText(x,y,text){
+    ctx.font = S*3 + "em Lilita One";
+    ctx.fillStyle="white";
+    ctx.textAlign = "center";
+    ctx.fillText(text, ctX(x),  ctY(y));
 }
 
 function drawHollowRectangle(x,y,w,h,thickness,color){

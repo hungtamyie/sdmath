@@ -3,6 +3,9 @@
 }
 
 #hpBarOuter{
+    position: relative;
+    top: 0em;
+    left: 0em;
     color: white;
     width: 250em;
     height: 20em;
@@ -13,6 +16,9 @@
 }
 
 #energyBarOuter{
+    position: relative;
+    top: 0em;
+    left: 0em;
     color: white;
     width: 250em;
     height: 10em;
@@ -40,4 +46,83 @@
 
 .normaltext {
     font-size: 30em;
+}
+
+#waveNumber {
+    position: relative;
+    top: 0.1em;
+    left: 21.1em;
+    color: white;
+    font-size: 30em;
+    width: 5em;
+    text-align: right;
+}
+
+#shotUIBox {
+    position: relative;
+    top: 635em;
+    left: 20em;
+    width: 380em;
+    height: 100em;
+    font-size: 0.6em;
+}
+
+.shotUIElem {
+    pointer-events: all;
+    cursor: pointer;
+    width: 95em;
+    height: 100em;
+    background-image: url("./images/shotSheet.png");
+    background-size: 570em;
+    background-position-x: 0em;
+    display: inline-block;
+    margin-right: 8em;
+}
+
+.shotUIElem>div {
+    display: inline-block;
+    margin-left: 0.2em;
+    margin-top: 0.2em;
+    font-size: 22em;
+    color:#3591E7;
+}
+.unselectedShot {
+    filter: grayscale(0.3);
+    opacity: 0.5
+}
+
+#mathBox{
+    position: relative;
+    font-size: 50em;
+    width: 6em;
+    left: 0.2em;
+    top: 1.2em;
+    text-align: left;
+}
+
+#mathBoxAnswer{
+    position: relative;
+    font-size: 25em;
+    width: 6em;
+    left: 0.5em;
+    top: 4.5em;
+    text-align: left;
+}
+
+#gameOverMessage {
+    position: relative;
+    font-size: 60em;
+    top: 3em;
+    z-index: 15;
+    left: 4.2em;
+}
+
+#playerCount {
+    position: relative;
+    font-size: 20em;
+    width: 10em;
+    color: blue;
+    top: 1.9em;
+    left: 29.2em;
+    text-align: right;
 }

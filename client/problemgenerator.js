@@ -39,8 +39,8 @@ var levelMapping = {
         [5, 5]
     ],
     level10: [
-        [80, 50, 30,true],
-        [15, 30, 5,true],
+        [80, 50, 20,true],
+        [15, 20, 5,true],
         [5, 5]
     ],
  }
@@ -53,7 +53,6 @@ function generateProblems(type, level, amount){
     var problemSets = []
     for(let i=0; i < levelData.length; i++){
         let possibleSums = generateAllSumsUnderMax(levelData[i][1],levelData[i][2],levelData[i][3])
-        shuffle(possibleSums)
         problemSets.push({percentage: levelData[i][0],problems: possibleSums,nextProblem: 0})
     }
     while(newProblems.length < amount){
@@ -64,7 +63,7 @@ function generateProblems(type, level, amount){
                     problemSets[i].nextProblem = 0;
                     shuffle(problemSets[i]);
                 }
-                var newProblem = problemSets[i].problems[problemSets[i].nextProblem]
+                var newProblem = JSON.parse(JSON.stringify(problemSets[i].problems[problemSets[i].nextProblem]))
                 if(Math.random()<0.5){
                     newProblem = [newProblem[1],newProblem[0]]
                 }
@@ -74,6 +73,7 @@ function generateProblems(type, level, amount){
             }
         }
     }
+    shuffle(newProblems);
     var unsorted = []
     for(let i=0; i<newProblems.length-1; i++){
         if(newProblems[i][0] == newProblems[i+1][0] && newProblems[i][1] == newProblems[i+1][1]){
@@ -96,17 +96,16 @@ function generateProblems(type, level, amount){
 }
 
 function generateAllSumsUnderMax(max, exclude, noIdentity){
-    var output = []
+    let zoutput = []
     if(!exclude) exclude=-1
-    var iMin = 0;
+    let iMin = 0;
     if(noIdentity==true) iMin=1;
-    for(i=max; i >= iMin; i--){
-        for(j=(max-i); (j >=i&&(j+i>exclude)); j--){
-            output.push([i,j])
-            //output.push([i+j,j])
+    for(let zi=max; zi >= iMin; zi--){
+        for(let zj=(max-zi); zj >=zi&&(zj+zi>exclude); zj--){
+            zoutput.push([zi,zj])
         }
     }
-    return output;
+    return zoutput;
 }
 
 function shuffle(array) {

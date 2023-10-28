@@ -361,16 +361,17 @@ element::-webkit-scrollbar {
 
 .newFeatureButton {
   display: inline-block;
-  background-color: #ABABAB;
+  background-color:#18223C;
   width: 300rem;
-  height: 100rem;
-  margin-top: 20rem;
+  height: 80rem;
+  margin-top: 5rem;
   border-radius: 15rem;
   color: rgb(211, 211, 211);
   cursor: pointer;
   font-size: 40rem;
   margin-bottom: 10rem;
-  line-height: 100rem;
+  line-height: 80rem;
+  box-shadow: 0px 2rem 4rem rgba(0, 0, 0, 0.319);
 }
 
 #copyContainer {
@@ -516,4 +517,19 @@ element::-webkit-scrollbar {
   -webkit-box-shadow:2rem 2rem 0rem 1rem #3591e7;
   -moz-box-shadow:2rem 2rem 0rem 1rem #3591e7;
   box-shadow:2rem 2rem 0rem 1rem #3591e7;
+}
+
+.launchActivityTitle {
+  color: #0245F0;
+  font-size: 40rem;
+  text-shadow: 0.2rem 2rem 3rem rgba(0, 0, 0, 0.349);
+  padding: 3rem;
+  padding-left: 15rem;
+  padding-right: 15rem;
+  border-top-left-radius: 40rem;
+  border-top-right-radius: 40rem;
+  background: #ffeb8a;
+  text-align: center;
+  border-bottom: 5rem solid #ffffff;
+  margin-bottom: 5rem;
 }

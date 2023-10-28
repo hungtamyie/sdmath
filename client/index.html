@@ -23,6 +23,7 @@
     <script src="teacher.js"></script>
     <script src="localStorage.js"></script>
     <script src="game.js"></script>
+    <script src="shop.js"></script>
 </head>
 <body>
     <div id="studentBanner">
@@ -96,6 +97,7 @@
             <div class="blue_button button noselect" onclick="start(false)">Practice ></div>
             <div class="green_button button noselect" onclick="start(true)">Test ></div>
         </div>
+        <div id="yourLevelInfo">You have passed <br> Level 0 Addition</div>
     </div>
     <div class="screen" id="quizScreen">
         <div class="content_box quiz_content_box">
@@ -129,9 +131,118 @@
     <div class="screen" id="gameScreen">
         <canvas id="canvas" width="500px" height="500px"></canvas>
         <br>
+        <div class="anchor">
+            <div class="buyScreen" id="buyScreen">
+                <div class="title">Shop</div>
+                <div class="shopDescription" id="shopText">You are a Level 5 <br> You have 5 points left</div>
+                <br>
+                <div class="shopCategory">
+                    Damage: &nbsp;
+                    <div class="upgradeCircle" id="upD0"></div>
+                    <div class="upgradeCircle" id="upD1"></div>
+                    <div class="upgradeCircle" id="upD2"></div>
+                    <div class="upgradeCircle" id="upD3"></div>
+                    <div class="upgradeCircle" id="upD4"></div>
+                    <div class="upgradeCircle" id="upD5"></div>
+                </div>
+                <div class="subUpgButton button" onclick="upD(-1)">-</div>
+                <div class="addUpgButton button" onclick="upD(1)">+</div>
+                <div class="shopCategory">
+                    Speed: &nbsp;
+                    <div class="upgradeCircle" id="upS0"></div>
+                    <div class="upgradeCircle" id="upS1"></div>
+                    <div class="upgradeCircle" id="upS2"></div>
+                    <div class="upgradeCircle" id="upS3"></div>
+                    <div class="upgradeCircle" id="upS4"></div>
+                    <div class="upgradeCircle" id="upS5"></div>
+                </div>
+                <div class="subUpgButton button" onclick="upS(-1)">-</div>
+                <div class="addUpgButton button" onclick="upS(1)">+</div>
+                <div class="shopCategory">
+                    Health: &nbsp;
+                    <div class="upgradeCircle" id="upH0"></div>
+                    <div class="upgradeCircle" id="upH1"></div>
+                    <div class="upgradeCircle" id="upH2"></div>
+                    <div class="upgradeCircle" id="upH3"></div>
+                    <div class="upgradeCircle" id="upH4"></div>
+                    <div class="upgradeCircle" id="upH5"></div>
+                </div>
+                <div class="subUpgButton button" onclick="upH(-1)">-</div>
+                <div class="addUpgButton button" onclick="upH(1)">+</div>
+                <div class="shopCategory">
+                    Shield: &nbsp;
+                    <div class="upgradeCircle" id="upSH0"></div>
+                    <div class="upgradeCircle" id="upSH1"></div>
+                </div>
+                <div class="subUpgButton button" onclick="upSH(-1)">-</div>
+                <div class="addUpgButton button" onclick="upSH(1)">+</div>
+                <div class="button" id="shopReady" onclick="closeAndApplyShop()">Ready</div>
+                <div class="anchor">
+                    <div class="chooseScreen">
+                        <div class="weaponBox">
+                            Primary:
+                            <div class="weaponContainerA">
+                                <div class="weaponSelect button shotSelected noselect" id="chooseShot0" onclick="shopChooseShot(0)">One Shot<div>(Lvl 0)</div></div>
+                            </div> 
+                            <div class="weaponbar"></div>
+                            <br>
+                            Secondary:
+                            <div class="weaponContainer">
+                                <div class="weaponSelect button noselect" id="chooseShot1" onclick="shopChooseShot(1)">Spread<div>(Lvl 4)</div></div>
+                                <br>
+                                <div class="weaponSelect button noselect" id="chooseShot2" onclick="shopChooseShot(2)">Beam<div>(Lvl 4)</div></div>
+                                <br>
+                                <div class="weaponSelect button noselect" id="chooseShot3" onclick="shopChooseShot(3)">Heal<div>(Lvl 6)</div></div>
+                            </div>
+                            <br>
+                            <br>
+                            <div class="weaponbar"></div>
+                            <br>
+                            Tertiary:
+                            <div class="weaponContainer">
+                                <div class="weaponSelect button noselect" id="chooseShot4" onclick="shopChooseShot(4)">Blast<div>(Lvl 8)</div></div>
+                                <br>
+                                <div class="weaponSelect button noselect" id="chooseShot5" onclick="shopChooseShot(5)">Fireworks<div>(Lvl 10)</div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="anchor canvasUI"><div id="canvasUI">
-            <div id="energyBarOuter"><div id="energyBarInner"></div></div>
-            <div id="hpBarOuter"><div id="hpBarInner"></div></div>
+            <div class="anchor">
+                <div id="energyBarOuter"><div id="energyBarInner"></div></div>
+                <div id="hpBarOuter"><div id="hpBarInner"></div></div>
+            </div>
+            <div class="anchor">
+                <div id="waveNumber" class="noselect">Wave 1</div>
+            </div>
+            <div class="anchor">
+                <div id="shotUIBox">
+                    <div class="shotUIElem unselectedShot button" id="shotSelect0" onclick="selectShot(0)"><div>Z</div></div>
+                    <div class="shotUIElem button" id="shotSelect1" onclick="selectShot(1)"><div>X</div></div>
+                    <div class="shotUIElem unselectedShot button" id="shotSelect2" onclick="selectShot(2)"><div>C</div></div>
+                </div>
+            </div>
+            <div class="anchor">
+                <div id="mathBox" class="noselect">
+                    
+                </div>
+            </div>
+            <div class="anchor">
+                <div id="mathBoxAnswer" class="noselect">
+                    
+                </div>
+            </div>
+            <div class="anchor">
+                <div id="gameOverMessage">Game Over</div>
+            </div>
+            <div class="anchor">
+                <div id="playerCount">Players alive: 0</div>
+            </div>
+            <div class="anchor">
+                <div id="holdSpaceMessage">(Spacebar for shield)</div>
+            </div>
         </div></div>
     </div>
     <div class="screen" id="teacherScreen">
@@ -188,9 +299,38 @@
                 </div>
             </div>
             <div class="newFeatureContainer">
-                <div class="newFeatureButton noselect">New Feature</div>
-                Coming soon (maybe)
+                <div class="launchActivityTitle">Launch Game</div>
+                <div class="newFeatureButton button" onclick="changeScreen('gameCreationScreen')">Into the Void</div>
             </div>
+        </div>
+    </div>
+    <div class="screen" id="gameCreationScreen">
+        <div class="content_box" id="gameCreationContentBox">
+            <div class="title smalltitle">Into the Void</div>
+            <div class="gameDescription">Into the Void is a game which is meant to encourage students to improve their math fact speed and accuracy. 
+                The entire class fights to survive as many waves as possible. Being a higher level allows students to buy upgrades and survive longer.
+                <br><br>
+                You can launch the game as addition or subtraction. All students will have that type of problem and their level will be the highest test they have passed this session. It's recommended that you 
+                tell students at the beginning of class which one you will pick.
+                <br><br>The controls are as follows:<br>
+                WASD to move <br>
+                Space to shield (if applicable) <br>
+                Click to shoot <br>
+                
+                <br>
+                When spectating you can use Q and E to zoom in and out. You could spectate and project the game to give students an overview of the map and give them strategies.
+                <br>
+                <br>
+                Good luck to you and your class!
+                <br>
+                <br>
+                Note: Launching this game will take all students out of whatever they are doing. Make sure to warn them ahead of time!
+            </div>
+            <div class="launchGameButton button" onclick="requestGameLaunch('Addition')">Launch as addition</div>
+            <br>
+            <div class="launchGameButton button" onclick="requestGameLaunch('Subtraction')">Launch as subtraction</div>
+            <br>
+            <div class="cancelGameButton button" onclick="changeScreen('teacherScreen')">Cancel</div>
         </div>
     </div>
     <div id="resultNotSentBar">

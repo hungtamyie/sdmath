@@ -8,11 +8,18 @@ class Servergame {
         this.idCounter = 0;
         this.events = [];
         this.rounds = new Rounds();
+        this.wave = 0;
+        this.enemyCount = 0; //Not actually an accurate count
+        this.realenemyCount = 0;
+        this.canLose = false;
+        this.gameOver = false;
+        this.kickTimer = 1000;
     }
 
-    addPlayer(id,socket){
-        this.players[id]=new Player(id,socket)
+    addPlayer(id,name,socket){
+        this.players[id]=new Player(id,name,socket)
         this.playerCount++;
+        this.canLose = true;
     }
 
     removePlayer(id){
@@ -51,6 +58,9 @@ class Servergame {
             if(info[0] == "PLAYERDAMAGE"){
                 this.events.push(["PLAYERDAMAGE", info[1], info[2]])
             }
+            if(info[0] == "PLAYERENERGY"){
+                this.events.push(["PLAYERENERGY", info[1], info[2]])
+            }
             if(info[0] == "ENEMYHIT"){
                 if(this.enemies[info[2].id]){
                     let enemy = this.enemies[info[2].id]
@@ -59,10 +69,15 @@ class Servergame {
                         enemy.target = this.players[info[1]]
                         enemy.aggroTimer = -1000
                     }
+                    if(enemy.geographicalTarget){
+                        enemy.geographicalTarget = false;
+                        enemy.aggroTimer = 100;
+                    }
                     if(enemy.health <= 0){
                         if(enemy.type==3){
                             this.spawnEnemyGroup(enemy.x,enemy.y)
                         }
+                        this.events.push(["ENEMYEXPLODE", enemy.id, {x: enemy.x, y: enemy.y}])
                         this.deleteEnemy(info[2].id)
                     }
                 }
@@ -71,42 +86,62 @@ class Servergame {
     }
 
     update(delta){
-        let waveToSpawn = this.rounds.updateWaveSpawn(delta, false)
+        let waveToSpawn = false
+        if(!this.gameOver){waveToSpawn=this.rounds.updateWaveSpawn(delta, (this.enemyCount <= 0 && this.wave > 0), (this.realenemyCount > 50))}
         if(waveToSpawn){
+            if(waveToSpawn.incrementsLevel){this.wave++}
             if(waveToSpawn.t0){
-                this.spawnEnemies(0,waveToSpawn.t0*this.playerCount)
+                this.spawnEnemies(0,waveToSpawn.t0*this.playerCount, waveToSpawn.hpMod)
             }
             if(waveToSpawn.t1){
-                this.spawnEnemies(1,waveToSpawn.t1*this.playerCount)
+                this.spawnEnemies(1,waveToSpawn.t1*this.playerCount, waveToSpawn.hpMod)
             }
             if(waveToSpawn.t2){
-                this.spawnEnemies(2,waveToSpawn.t2*this.playerCount)
+                this.spawnEnemies(2,waveToSpawn.t2*this.playerCount, waveToSpawn.hpMod)
             }
             if(waveToSpawn.t3){
-                this.spawnEnemies(3,waveToSpawn.t3*this.playerCount)
+                this.spawnEnemies(3,waveToSpawn.t3*this.playerCount, waveToSpawn.hpMod)
             }
             if(waveToSpawn.t3){
-                this.spawnEnemies(4,waveToSpawn.t4*this.playerCount)
+                this.spawnEnemies(4,waveToSpawn.t4*this.playerCount, waveToSpawn.hpMod)
             }
         }
-
         this.updateEnemies(delta)
+        this.alivePlayerCount = 0;
+        for (const pkey in this.players) {
+            if (this.players.hasOwnProperty(pkey)) {
+                let player = this.players[pkey]
+                if(!player.dead) this.alivePlayerCount++;
+            }
+        }
+        if(this.alivePlayerCount <= 0 && this.canLose){
+            this.gameOver = true;
+        }
+        if(this.gameOver){
+            this.kickTimer-=delta;
+            if(this.kickTimer <= 0){
+                for (const pkey in this.players) {
+                    if (this.players.hasOwnProperty(pkey)) {
+                        this.removePlayer(this.players[pkey].id)
+                    }
+                }
+            }
+        }
     }
 
     spawnEnemyGroup(x,y){
         for(let i = 0; i < 4; i++){
             let id = this.newId()
-            this.enemies[id] = new Enemy(id, 1, x, y)
+            this.enemies[id] = new Enemy(id, 1, x, y, 1.5)
             this.enemies[id].x += Math.random()*5
             this.enemies[id].y += Math.random()*5
         }
     }
 
-    spawnEnemies(type,count){
-        for(let i = -1; i < count; i++){
+    spawnEnemies(type,count, hpMod){
+        for(let i = 0; i < count; i++){
             let id = this.newId()
-            this.enemies[id] = new Enemy(id, type)
-            this.enemies[id].x += Math.random()*5
+            this.enemies[id] = new Enemy(id, type, false, false, hpMod)
         }
     }
 
@@ -117,6 +152,8 @@ class Servergame {
     }
 
     updateEnemies(delta){
+        this.enemyCount=0;
+        this.realenemyCount=0;
         for (const key in this.enemies) {
             if (this.enemies.hasOwnProperty(key)) {
                 let enemy = this.enemies[key]
@@ -152,7 +189,7 @@ class Servergame {
                     }
                 }
                 if(closeCount > 3 && enemy.dislikesSwarming){
-                    enemy.geographicalTarget = {x: Math.random()*2500, y: Math.random()*2500}
+                    enemy.geographicalTarget = {x: 500+Math.random()*1500, y: 500+Math.random()*1500}
                     enemy.aggroTimer = -500
                 }
                 if(closeCount == 0 && enemy.dislikesSwarming){
@@ -181,7 +218,7 @@ class Servergame {
                     }
                     enemy.target = closestPlayer;
                     if(playerCount == 0 && !enemy.geographicalTarget){
-                        enemy.geographicalTarget = {x: Math.random()*2500, y: Math.random()*2500}
+                        enemy.geographicalTarget = {x: 500+Math.random()*1500, y: 500+Math.random()*1500}
                     }
                 }
                 for (const pkey in this.players) {
@@ -233,12 +270,14 @@ class Servergame {
                 }
 
                 enemy.attackTimer -= delta
+                this.enemyCount++;
+                this.realenemyCount++;
+                if(enemy.type == 3) this.enemyCount+=30;
             }
         }   
     }
 
     shieldRepel(enemy,player,delta){
-        console.log("repel")
         var offsetX = enemy.x - player.x
         var offsetY = enemy.y - player.y
         var offsetDist = Math.sqrt(offsetX**2+offsetY**2)||0;
@@ -281,6 +320,10 @@ class Servergame {
         output.enemies = enemiesJson;
         output.bullets = this.bullets;
         output.events = this.events;
+        output.wave = this.wave;
+        output.gameOver = this.gameOver;
+        output.alivePlayerCount = this.alivePlayerCount;
+
         return JSON.stringify(output);
     }
 
@@ -290,8 +333,9 @@ class Servergame {
 }
 
 class Player {
-    constructor(id,socket){
+    constructor(id,name,socket){
         this.id = id
+        this.name = name
         this.socket = socket
         this.x = 0
         this.y = 0
@@ -312,15 +356,17 @@ class Player {
             energy: this.energy,
             maxEnergy: this.maxEnergy,
             shieldLevel: this.shieldLevel,
-            dead: this.dead
+            dead: this.dead,
+            name: this.name
         }
     }
 }
 
 class Enemy {
-    constructor(id, type, x, y){
+    constructor(id, type, x, y, hpMod){
         this.id = id;
-        if(typeof x != "undefined" && typeof y != "undefined"){
+        if(!hpMod) hpMod = 1
+        if(x && y){
             this.x = x;
             this.y = y;
         }
@@ -343,8 +389,8 @@ class Enemy {
                 this.x = Math.random()*2500;
             }
         }
-        this.health = 30;
-        this.maxHealth = 30;
+        this.health = 30
+        this.maxHealth = 30
         this.target = "";
         this.geographicalTarget = false;
         this.speed = 1;
@@ -410,6 +456,8 @@ class Enemy {
             this.healthbarOffset=-10;
             this.size = 15;
         }
+        this.health *= hpMod
+        this.maxHealth *= hpMod
     }
     
     toJson(){
