@@ -53,6 +53,7 @@ function generateProblems(type, level, amount){
     var problemSets = []
     for(let i=0; i < levelData.length; i++){
         let possibleSums = generateAllSumsUnderMax(levelData[i][1],levelData[i][2],levelData[i][3])
+        shuffle(possibleSums);
         problemSets.push({percentage: levelData[i][0],problems: possibleSums,nextProblem: 0})
     }
     while(newProblems.length < amount){
