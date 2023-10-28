@@ -24,6 +24,7 @@ window.onload = function(){
     setupCanvas();
     resizeCanvas();
     socket=io()
+    setupSocket()
 }
 
 function activateEnterKey(){

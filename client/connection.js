@@ -3,83 +3,84 @@ var myName;
 var myRoom;
 var amTeacher = false;
 
-socket.on('connect', function(){
-    if(teacherSettings.teacherName){
-        $("#connectionStatus").html("Connected to " + makePossesive(teacherSettings.teacherName) + " room")
-        $("#connectionStatus").removeClass("disconnected")
-    }
-    if(offlineMode){
-        $("#connectionStatus").html("Offline mode")
-        $("#connectionStatus").addClass("disconnected")
-    }
-});
-socket.on("serverMessage",function(data){
-    showServerMessage(data);
-})
-socket.on('disconnect', function(){
-    if(teacherSettings.teacherName){
-        $("#connectionStatus").html("Disconnected from " + makePossesive(teacherSettings.teacherName) + " room")
-        $("#connectionStatus").addClass("disconnected")
-    }
-    if(offlineMode){
-        $("#connectionStatus").html("Offline mode")
-        $("#connectionStatus").addClass("disconnected")
-    }
-})
-socket.on("roomCreated",function(data){
-    teacherSettings.teacherName = $("#studentName").html()
-    saveRoomSettings(data)
-    showStudentBanner()
-    $("#roomCodeBox").html("#" + data.roomCode)
-    myRoom = data.roomCode;
-    myName = teacherSettings.teacherName;
-    changeScreen("teacherScreen")
-    amTeacher = true;
-})
-socket.on("roomJoined",function(data){
-    teacherSettings.quizProblems = data.numberOfProblems;
-    teacherSettings.timeLimit = data.timeLimit;
-    teacherSettings.correctionsMidTest = data.corrections;
-    teacherSettings.passingPercentage = data.percentToPass;
-    teacherSettings.teacherName = data.teacherName;
-    myRoom = "r" + data.roomCode;
-    if(data.offlineMode){
-        offlineMode = true;       
-        $("#resultNotSentBar").css("display","block");
-        $("#resultNotSentBar").css("background","#3591e7");
-        $("#showMyResultsButton").css("background","#0245f0");
-        $("#showMyResultsButton").html("Show results");
-        $("#resultWarningMessage").html("You are in offline mode! No results will be sent to your teacher.")
-    }
-    showStudentBanner();
-    changeScreen("levelSelectScreen");
-})
-socket.on("gameUpdate",function(data){
-    takeGameUpdate(JSON.parse(data));
-})
-socket.on("gameStarted",function(data){
-    console.log(data)
-    startGame(data);
-})
-socket.on("studentGameStarted", function(data){
-    socket.emit("requestJoinGame",data)
-})
-
-var alreadyReceivedResults = {}
-socket.on("studentResult",function(data){
-    var resultId = data.result[0]
-    socket.emit("studentResultReceived",{studentID: data.studentID, dataID: data.result[0]})
-    if(alreadyReceivedResults[resultId]) return; //This result has been already received and student has sent it twice.
-    alreadyReceivedResults[resultId] = true;
-    newResult(data.result)
-})
-socket.on("yourResultReceived",function(data){
-    for(let i = 0; i < resultsToSend.length; i++){
-        if(data == resultsToSend[i].resultId){
-            resultsToSend.splice(i,1);
+function setupSocket(){
+    socket.on('connect', function(){
+        if(teacherSettings.teacherName){
+            $("#connectionStatus").html("Connected to " + makePossesive(teacherSettings.teacherName) + " room")
+            $("#connectionStatus").removeClass("disconnected")
         }
-    }
-})
+        if(offlineMode){
+            $("#connectionStatus").html("Offline mode")
+            $("#connectionStatus").addClass("disconnected")
+        }
+    });
+    socket.on("serverMessage",function(data){
+        showServerMessage(data);
+    })
+    socket.on('disconnect', function(){
+        if(teacherSettings.teacherName){
+            $("#connectionStatus").html("Disconnected from " + makePossesive(teacherSettings.teacherName) + " room")
+            $("#connectionStatus").addClass("disconnected")
+        }
+        if(offlineMode){
+            $("#connectionStatus").html("Offline mode")
+            $("#connectionStatus").addClass("disconnected")
+        }
+    })
+    socket.on("roomCreated",function(data){
+        teacherSettings.teacherName = $("#studentName").html()
+        saveRoomSettings(data)
+        showStudentBanner()
+        $("#roomCodeBox").html("#" + data.roomCode)
+        myRoom = data.roomCode;
+        myName = teacherSettings.teacherName;
+        changeScreen("teacherScreen")
+        amTeacher = true;
+    })
+    socket.on("roomJoined",function(data){
+        teacherSettings.quizProblems = data.numberOfProblems;
+        teacherSettings.timeLimit = data.timeLimit;
+        teacherSettings.correctionsMidTest = data.corrections;
+        teacherSettings.passingPercentage = data.percentToPass;
+        teacherSettings.teacherName = data.teacherName;
+        myRoom = "r" + data.roomCode;
+        if(data.offlineMode){
+            offlineMode = true;       
+            $("#resultNotSentBar").css("display","block");
+            $("#resultNotSentBar").css("background","#3591e7");
+            $("#showMyResultsButton").css("background","#0245f0");
+            $("#showMyResultsButton").html("Show results");
+            $("#resultWarningMessage").html("You are in offline mode! No results will be sent to your teacher.")
+        }
+        showStudentBanner();
+        changeScreen("levelSelectScreen");
+    })
+    socket.on("gameUpdate",function(data){
+        takeGameUpdate(JSON.parse(data));
+    })
+    socket.on("gameStarted",function(data){
+        console.log(data)
+        startGame(data);
+    })
+    socket.on("studentGameStarted", function(data){
+        socket.emit("requestJoinGame",data)
+    })
+    socket.on("studentResult",function(data){
+        var resultId = data.result[0]
+        socket.emit("studentResultReceived",{studentID: data.studentID, dataID: data.result[0]})
+        if(alreadyReceivedResults[resultId]) return; //This result has been already received and student has sent it twice.
+        alreadyReceivedResults[resultId] = true;
+        newResult(data.result)
+    })
+    socket.on("yourResultReceived",function(data){
+        for(let i = 0; i < resultsToSend.length; i++){
+            if(data == resultsToSend[i].resultId){
+                resultsToSend.splice(i,1);
+            }
+        }
+    })
+}
+var alreadyReceivedResults = {}
 
 function tryRoomCreate(){
     var data = {
