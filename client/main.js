@@ -23,6 +23,7 @@ window.onload = function(){
     }, 6000);
     setupCanvas();
     resizeCanvas();
+    socket=io()
 }
 
 function activateEnterKey(){

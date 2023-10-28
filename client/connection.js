@@ -1,4 +1,4 @@
-var socket = io();
+var socket;
 var myName;
 var myRoom;
 var amTeacher = false;
