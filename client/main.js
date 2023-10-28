@@ -12,7 +12,6 @@ function changeScreen(screen){
 
 window.onload = function(){
     changeScreen("loginScreen");
-    changeScale();
     activateEnterKey();
     tick();
     displayRecords();
@@ -23,6 +22,7 @@ window.onload = function(){
     }, 6000);
     setupCanvas();
     resizeCanvas();
+    changeScale();
     socket=io()
     setupSocket()
 }
