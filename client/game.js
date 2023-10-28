@@ -255,7 +255,7 @@ function updateMe(delta){
         myPos.y=2500-10
     }
 
-    if(keys[" "] && !myStats.amDead && myStats.energy > 0){
+    if(keys[" "] && !myStats.amDead && myStats.energy > 0 && myUpgrades.shield != 0){
         myStats.shieldLevel = myUpgrades.shield;
         myStats.energy -= 0.004*delta
     }
@@ -1152,7 +1152,7 @@ function drawRectangle(x,y,w,h,color){
 }
 
 function drawText(x,y,text){
-    ctx.font = S*3 + "em Lilita One";
+    ctx.font = S*2.2 + "em Lilita One";
     ctx.fillStyle="white";
     ctx.textAlign = "center";
     ctx.fillText(text, ctX(x),  ctY(y));
