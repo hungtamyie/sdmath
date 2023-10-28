@@ -65,6 +65,7 @@ window.onresize = changeScale;
 function changeScale(){
     var size = (window.innerWidth/2 + window.innerHeight)/2000
     $("html").css("font-size", size + "px")
+    resizeCanvas();
 }
 
 var myMaxAdditionLevel = 0;

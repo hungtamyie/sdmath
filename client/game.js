@@ -50,7 +50,6 @@ function setupCanvas(){
         const y = e.clientY - rect.top
         shoot(ictX(x),ictY(y))
     }
-    window.onresize = resizeCanvas;
 }
 
 var S = 1
