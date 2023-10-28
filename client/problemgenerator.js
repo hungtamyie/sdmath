@@ -57,7 +57,7 @@ function generateProblems(type, level, amount){
         problemSets.push({percentage: levelData[i][0],problems: possibleSums,nextProblem: 0})
     }
     while(newProblems.length < amount){
-        var percentageIndex = (newProblems.length%10)*10;
+        var percentageIndex = (newProblems.length%15)*15;
         for(let i = problemSets.length-1; i >= 0; i--){
             if(problemSets[i].percentage > percentageIndex || i == 0){
                 if(problemSets[i].nextProblem >= problemSets[i].problems.length){
