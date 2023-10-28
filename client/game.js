@@ -447,6 +447,7 @@ function takeGameUpdate(data){
         if(event[0] == "NEWBULLET"){
             if(!currentGameData.bullets[event[1]] && event[2].launcherId != socket.id){
                 currentGameData.bullets[event[1]] = event[2];
+                currentGameData.bullets[event[1]].spawnTime = Date.now();
                 newParticle(event[2].launchEffect, event[2].x, event[2].y)
             }
         }

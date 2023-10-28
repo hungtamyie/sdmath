@@ -39,6 +39,13 @@ class Rounds {
                 t2: 0.4
             },
             {   
+                delay: 500,
+                hpMod: 0.9,
+                t0: 0.2,
+                t1: 0.2,
+                t2: 0.6
+            },
+            {   
                 incrementsLevel: true,
                 delay: 99999,
                 hpMod: 1,
@@ -54,7 +61,7 @@ class Rounds {
             },
             {   
                 incrementsLevel: true,
-                delay: 10000000000000,
+                delay: 99999,
                 t0: 0.2,
                 t1: 0.2,
                 t4: 0.3,

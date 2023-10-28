@@ -14,12 +14,12 @@ class Servergame {
         this.canLose = false;
         this.gameOver = false;
         this.kickTimer = 1000;
+        this.canLoseTimer = 1000;
     }
 
     addPlayer(id,name,socket){
         this.players[id]=new Player(id,name,socket)
         this.playerCount++;
-        this.canLose = true;
     }
 
     removePlayer(id){
@@ -126,6 +126,10 @@ class Servergame {
                     }
                 }
             }
+        }
+        this.canLoseTimer -= delta;
+        if(this.canLoseTimer <= 0){
+            this.canLose = true;
         }
     }
 
