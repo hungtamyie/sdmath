@@ -24,9 +24,9 @@ function setupShop(level){
     if(!level)level=0;
     shopMax = level
     shopPoints = level
-    $("#chooseShot0 #chooseShot1 #chooseShot2 #chooseShot3 #chooseShot4 #chooseShot5").removeClass("unselectableWeapon")
-    $("#chooseShot0 #chooseShot1 #chooseShot2 #chooseShot3 #chooseShot4 #chooseShot5").addClass("button")
-    $("#chooseShot0 #chooseShot1 #chooseShot2 #chooseShot3 #chooseShot4 #chooseShot5").addClass("weaponSelect")
+    $("#chooseShot0,#chooseShot1,#chooseShot2,#chooseShot3,#chooseShot4,#chooseShot5").removeClass("unselectableWeapon")
+    $("#chooseShot0,#chooseShot1,#chooseShot2,#chooseShot3,#chooseShot4,#chooseShot5").addClass("button")
+    $("#chooseShot0,#chooseShot1,#chooseShot2,#chooseShot3,#chooseShot4,#chooseShot5").addClass("weaponSelect")
     if(shopMax < 10){
         $("#chooseShot5").removeClass("weaponSelect").removeClass("button").addClass("unselectableWeapon")
     }
