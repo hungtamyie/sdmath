@@ -11,7 +11,7 @@ app.get('/', (req, res) => {
 app.use(express.static(path.join(__dirname, '..', '/client')))
 
 const cors = require('cors');
-const Servergame = require('./servergame');
+const Servergame = require('./aservergame');
 app.use(cors({
     origin: '*'
 }));
