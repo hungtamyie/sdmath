@@ -1117,7 +1117,7 @@ for (const key in obj) {
 var clickX = 0;
 var clickY = 0;
 function drawMap(){
-    var lineColor = "rgb(30,30,30)"
+    var lineColor = "rgb(50,50,50)"
     for(let i = 0; i < 25; i++){
         drawLine(i*100,0,i*100,2500,0.5,lineColor)
     }
