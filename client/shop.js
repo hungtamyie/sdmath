@@ -40,6 +40,11 @@ function setupShop(level){
         $("#chooseShot2").removeClass("weaponSelect").removeClass("button").addClass("unselectableWeapon")
         $("#chooseShot1").removeClass("weaponSelect").removeClass("button").addClass("unselectableWeapon")
     }
+    $("#upD0,#upD1,#upD2,#upD3,#upD4,#upD5").removeClass("upgraded")
+    $("#upS0,#upS1,#upS2,#upS3,#upS4,#upS5").removeClass("upgraded")
+    $("#upH0,#upH1,#upH2,#upH3,#upH4,#upH5").removeClass("upgraded")
+    $("#upSH0,#upSH1").removeClass("upgraded")
+    
     if(shopMax >= 4){shopChooseShot(1)}
     if(shopMax >= 8){shopChooseShot(4)}
     $("#buyScreen").css("display","inline-block")

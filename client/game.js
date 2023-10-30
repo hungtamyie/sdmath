@@ -37,6 +37,7 @@ function startGame(type){
     selectShot(0)
     shadowData={}
     gameRunning=true;
+    myCurrentAnswer = "";
     hideStudentBanner();
 }
 
@@ -138,6 +139,7 @@ function resetStats(){
         invincibility: 300,
         gameEndingTimer: 1000,
     }
+    myProblems = [];
     myUpgrades = {
         shield: 0,
     }

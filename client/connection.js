@@ -59,7 +59,6 @@ function setupSocket(){
         takeGameUpdate(JSON.parse(data));
     })
     socket.on("gameStarted",function(data){
-        console.log(data)
         startGame(data);
     })
     socket.on("studentGameStarted", function(data){
