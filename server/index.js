@@ -27,7 +27,7 @@ serv.listen(port, (error)=>{
     }
 });
 const io = require('socket.io')(serv, {'pingInterval': 2000, 'pingTimeout': 5000});
-
+var uniqueGameCode = 0;
 io.on("connection", (socket) => {
     socket.myData = {}
 
@@ -110,7 +110,7 @@ io.on("connection", (socket) => {
 
     socket.on("requestGameStart",function(data){
         if(socket.myData.amTeacher == true && !games[socket.myData.myGameRoom]){
-            games[socket.myData.myGameRoom] = new Servergame(socket.myData.myGameRoom)
+            games[socket.myData.myGameRoom] = new Servergame(socket.myData.myGameRoom, data, uniqueGameCode++)
             games[socket.myData.myGameRoom].addPlayer(socket.id,socket.myData.myName,socket)
             socket.to(socket.myData.myGameRoom).emit("studentGameStarted",data)
             socket.emit("gameStarted",data)
@@ -118,8 +118,10 @@ io.on("connection", (socket) => {
     })
 
     socket.on("requestJoinGame",function(data){
-        games[socket.myData.myGameRoom].addPlayer(socket.id,socket.myData.myName,socket)
-        socket.emit("gameStarted",data)
+        if(games[socket.myData.myGameRoom]){
+            games[socket.myData.myGameRoom].addPlayer(socket.id,socket.myData.myName,socket)
+            socket.emit("gameStarted",data)
+        }
     })
 
     socket.on("gameInfo",function(data){
@@ -167,6 +169,10 @@ io.on("connection", (socket) => {
         socket.myData.myName = data.name
         socket.myData.myGameRoom = "g"+roomID
         socket.join(socket.myData.myGameRoom)
+        if(games[socket.myData.myGameRoom]){
+            games[socket.myData.myGameRoom].addPlayer(socket.id,socket.myData.myName,socket)
+            socket.emit("gameRejoin",{type: games[socket.myData.myGameRoom].mathType, uniqueGameCode: games[socket.myData.myGameRoom].uniqueGameCode})
+        }
     })
 })
 

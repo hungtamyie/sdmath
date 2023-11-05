@@ -161,18 +161,10 @@ function closeAndApplyShop(){
     myStats.gunA = 0;
     myStats.gunB = shopSettings.gunB;
     myStats.gunC = shopSettings.gunC;
-
-    if(myStats.gunB){$("#shotSelect1").css("display", "inline-block")}else{$("#shotSelect1").css("display", "none")}
-    if(myStats.gunC){$("#shotSelect2").css("display", "inline-block")}else{$("#shotSelect2").css("display", "none")}
-    $("#shotSelect1").css("background-position", ("-"+myStats.gunB*95+"em"))
-    $("#shotSelect2").css("background-position", ("-"+myStats.gunC*95+"em"))
-    console.log(myUpgrades.shield)
-    if(myUpgrades.shield == 0){
-        $("#holdSpaceMessage").css("visibility", "hidden")
-    }
-    else {
-        $("#holdSpaceMessage").css("visibility", "visible")
-    }
+    
+    updateUIBasedOnStats()
+    hasClosedShop = true;
+    saveGameState()
 }
 
 var upgradeMappings = {
@@ -181,3 +173,15 @@ var upgradeMappings = {
     health: [10,17,27,32,40,43,56],
 }
 
+function updateUIBasedOnStats(){
+    if(myStats.gunB){$("#shotSelect1").css("display", "inline-block")}else{$("#shotSelect1").css("display", "none")}
+    if(myStats.gunC){$("#shotSelect2").css("display", "inline-block")}else{$("#shotSelect2").css("display", "none")}
+    $("#shotSelect1").css("background-position", ("-"+myStats.gunB*95+"em"))
+    $("#shotSelect2").css("background-position", ("-"+myStats.gunC*95+"em"))
+    if(myUpgrades.shield == 0){
+        $("#holdSpaceMessage").css("visibility", "hidden")
+    }
+    else {
+        $("#holdSpaceMessage").css("visibility", "visible")
+    }
+}

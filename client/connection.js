@@ -61,6 +61,25 @@ function setupSocket(){
     socket.on("gameStarted",function(data){
         startGame(data);
     })
+    socket.on("gameRejoin",function(data){
+        if(localStorageExists){
+            if(localStorage.getItem("lastGameUID") == data.uniqueGameCode){
+                if(!JSON.parse(localStorage.getItem("hadClosedShop"))){
+                    startGame(data.type, "withShop");
+                }
+                else {
+                    startGame(data.type, "withoutShop");
+                }
+                startGame(data.type, true);
+            }
+            else {
+                startGame(data.type);
+            }
+        }
+        else{
+            startGame(data.type);
+        }
+    })
     socket.on("studentGameStarted", function(data){
         socket.emit("requestJoinGame",data)
     })

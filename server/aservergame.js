@@ -1,7 +1,9 @@
 const Rounds = require('./rounds.js');
 class Servergame {
-    constructor(roomCode){
-        this.roomCode = roomCode
+    constructor(roomCode, mathType, uniqueGameCode){
+        this.uniqueGameCode = uniqueGameCode;
+        this.mathType = mathType 
+        this.roomCode = roomCode;
         this.enemies = {};
         this.players = {};
         this.playerCount = 0;
@@ -327,6 +329,7 @@ class Servergame {
         output.wave = this.wave;
         output.gameOver = this.gameOver;
         output.alivePlayerCount = this.alivePlayerCount;
+        output.uniqueGameCode = this.uniqueGameCode;
 
         return JSON.stringify(output);
     }
@@ -442,8 +445,8 @@ class Enemy {
             this.shoots=true;
             this.healthbarSize=4;
             this.reloadTime=400;
-            this.maxHealth=300;
-            this.health=300;
+            this.maxHealth=550;
+            this.health=550;
             this.range=800;
         }
         else if(this.type == 4){

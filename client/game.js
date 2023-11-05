@@ -1,7 +1,9 @@
 var canvas;
 var ctx; 
 
-function startGame(type){
+var hasClosedShop = true;
+var lastShopLevel = 0;
+function startGame(type, isReconnect){
     var level = 0;
     if(type == "Addition"){
         level = myMaxAdditionLevel
@@ -28,17 +30,31 @@ function startGame(type){
     if(level == 0)myStats.mathLevel = 1
     myStats.mathType = type
     if(!amTeacher){
-        setupShop(level)
+        if(!isReconnect){
+            setupShop(level)
+            hasClosedShop = false;
+        }
+        else if(isReconnect == "withShop"){
+            level = Number(localStorage.getItem("lastShopLevel"))||0
+            setupShop(level)
+            hasClosedShop = false;
+        }
     }else {
         myStats.amDead = true;
         $("#holdSpaceMessage").css("visibility", "hidden")
     }
+    if(isReconnect){
+        reconnectWithSameStats()
+    }
+    updateUIBasedOnStats()
     getMoreGameProblems()
     selectShot(0)
     shadowData={}
     gameRunning=true;
     myCurrentAnswer = "";
     hideStudentBanner();
+    lastShopLevel = level;
+    saveGameState()
 }
 
 function setupCanvas(){
@@ -101,6 +117,58 @@ var myStats = {
     invincibility: 300,
     gameEndingTimer: 1000,
 }
+
+function saveGameState(){
+    var lastStats = {
+        speed: myStats.speed,
+        health: myStats.health,
+        maxHealth: myStats.maxHealth,
+        energy: myStats.energy,
+        maxEnergy: myStats.maxEnergy,
+        amDead: myStats.amDead,
+        damageModifier: myStats.damageModifier,
+        shield: myUpgrades.shield,
+        mathLevel: myStats.mathLevel,
+        mathType: myStats.mathType,
+        respawnCount: myStats.respawnCount,
+        respawnProblems: myStats.respawnProblems,
+        gunA: myStats.gunA,
+        gunB: myStats.gunB,
+        gunC: myStats.gunC,
+        energyGain: myStats.energyGain,
+    }
+    if(localStorageExists){
+        localStorage.setItem("lastStats", JSON.stringify(lastStats))
+        localStorage.setItem("lastGameUID", JSON.stringify(currentGameData.uniqueGameCode))
+        localStorage.setItem("lastShopLevel", JSON.stringify(lastShopLevel))
+        localStorage.setItem("hadClosedShop", JSON.stringify(hasClosedShop))
+    }
+}
+
+function reconnectWithSameStats(){
+    if(localStorageExists){
+        var lastStats = localStorage.getItem("lastStats")
+        if(lastStats){
+            lastStats = JSON.parse(lastStats);
+        }
+        myStats.speed = lastStats.speed;
+        myStats.health = lastStats.health;
+        myStats.maxHealth = lastStats.maxHealth;
+        myStats.energy = lastStats.energy;
+        myStats.amDead = lastStats.amDead;
+        myStats.damageModifier = lastStats.damageModifier;
+        myUpgrades.shield = lastStats.shield;
+        myStats.mathLevel = lastStats.mathLevel;
+        myStats.mathType = lastStats.mathType;
+        myStats.respawnCount = lastStats.respawnCount;
+        myStats.respawnProblems = lastStats.respawnProblems;
+        myStats.gunA = lastStats.gunA;
+        myStats.gunB = lastStats.gunB;
+        myStats.gunC = lastStats.gunC;
+        myStats.energyGain = lastStats.energyGain;
+    }
+}
+
 var myUpgrades = {
     shield: 0,
 }
@@ -110,6 +178,7 @@ var camera = {
     zoom: 3.5,
 }
 var timeSinceLastUpdate = 0;
+var timeSinceLastSave = 0;
 
 function resetStats(){
     myPos = {
@@ -162,7 +231,7 @@ document.onkeydown = function(ev){
 document.onkeyup = function(ev){
     keys[ev.key.toLowerCase()]=false;
 }
-var respawnMapping = [1,5,10,30,60,100,300]
+var respawnMapping = [1,5,10,30,60,100,300,1000]
 
 function getMoreGameProblems(){
     myProblems = myProblems.concat(generateProblems(myStats.mathType, "level"+(myStats.mathLevel), 50))
@@ -182,6 +251,11 @@ function doGameTick(delta){
         gameInformation.push(["STATEUPDATE",socket.id,{x: myPos.x, y: myPos.y, health: myStats.health, maxHealth: myStats.maxHealth, energy: myStats.energy, maxEnergy: myStats.maxEnergy, dead: myStats.amDead, shieldLevel: myStats.shieldLevel}])
         socket.emit("gameInfo",gameInformation)
         gameInformation=[];
+    }
+    timeSinceLastSave+=delta;
+    if(timeSinceLastSave > 500 && myRoom){
+        timeSinceLastSave = 0;
+        saveGameState();
     }
     ctx.clearRect(0,0,canvas.width,canvas.height)
     drawMap();
@@ -415,6 +489,7 @@ function drawParticles(delta){
 }
 function takeGameUpdate(data){
     currentGameData.players = {}
+    currentGameData.uniqueGameCode = data.uniqueGameCode;
     for (const key in data.players) {
         if (data.players.hasOwnProperty(key)) {
             let player = data.players[key]
@@ -630,7 +705,7 @@ function doGameMath(symbol){
                     $("#mathBoxAnswer").css("color", "#D20000")
                 }
             }
-            if(myStats.respawnProblems == 0){
+            if(myStats.respawnProblems <= 0){
                 respawn();
             }
         }

@@ -47,6 +47,32 @@ class Rounds {
             },
             {   
                 incrementsLevel: true,
+                delay: 500,
+                hpMod: 1,
+                t0: 0.3,
+                t2: 0.1
+            },
+            {   
+                delay: 600,
+                hpMod: 1,
+                t0: 0.5,
+                t2: 0.1
+            },
+            {   
+                incrementsLevel: true,
+                delay: 500,
+                hpMod: 1,
+                t0: 0.3,
+                t1: 0.1
+            },
+            {   
+                delay: 600,
+                hpMod: 1,
+                t0: 0.7,
+                t1: 0.1
+            },
+            {   
+                incrementsLevel: true,
                 delay: 99999,
                 hpMod: 1,
                 t0: 0.3,
@@ -61,16 +87,35 @@ class Rounds {
             },
             {   
                 incrementsLevel: true,
+                delay: 500,
+                hpMod: 1,
+                t0: 0.3,
+                t2: 0.1,
+                t3: 0.08,
+            },
+            {   
+                delay: 600,
+                hpMod: 1,
+                t0: 0.5,
+                t2: 0.1,
+                t4: 0.1,
+                hpMod: 1.2,
+            },
+            {   
+                incrementsLevel: true,
                 delay: 99999,
                 t0: 0.2,
                 t1: 0.2,
                 t4: 0.3,
+                hpMod: 1.2,
             },
             {   
                 delay: 1000,
                 t0: 0.5,
                 t1: 0.5,
+                t3: 0.1,
                 t2: 0.2,
+                hpMod: 1.2,
             },
             {   
                 incrementsLevel: true,
@@ -80,27 +125,57 @@ class Rounds {
                 t2: 0.2,
                 t3: 0.3,
                 t4: 0.5,
+                hpMod: 1.2,
             },
             {   
                 delay: 3000,
                 t1: 0.5,
-                t3: 0.6,
-                t4: 0.9,
+                t3: 0.2,
+                t4: 0.1,
+                hpMod: 1.2,
             },
             {   
+                incrementsLevel: true,
+                delay: 10000000,
+                t0: 0.1,
+                t1: 0.4,
+                t2: 0.2,
+                hpMod: 1.5,
+                t3: 0.2,
+                t4: 0.1,
+            },
+            {   
+                incrementsLevel: true,
                 delay: 4000,
                 t0: 0.5,
                 t1: 1,
                 hpMod: 2,
                 t3: 0.6,
-                t4: 0.9,
+                t4: 0.3,
             },
             {   
+                incrementsLevel: true,
                 delay: 1000000000,
                 hpMod: 3,
                 t1: 1,
                 t3: 1,
+                t4: 0.5,
+            },
+            {   
+                incrementsLevel: true,
+                delay: 1000000000,
+                hpMod: 4,
+                t1: 1,
+                t2: 0.7,
+                t3: 1,
                 t4: 1,
+            },
+            {   
+                incrementsLevel: false,
+                delay: 500,
+                hpMod: 6,
+                t1: 1.5,
+                t2: 2,
             },
         ]
         this.waveTimer = 0;
@@ -117,7 +192,6 @@ class Rounds {
         if(this.waveTimer > waveDelay || noEnemies){
             this.waveTimer = 0;
             stuffToReturn = this.data[this.currentWave]
-            console.log(stuffToReturn)
             this.currentWave++;
         }
         return stuffToReturn;
