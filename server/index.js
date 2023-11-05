@@ -28,6 +28,7 @@ serv.listen(port, (error)=>{
 });
 const io = require('socket.io')(serv, {'pingInterval': 2000, 'pingTimeout': 5000});
 var uniqueGameCode = 0;
+const crypto = require("crypto");
 io.on("connection", (socket) => {
     socket.myData = {}
 
@@ -110,7 +111,8 @@ io.on("connection", (socket) => {
 
     socket.on("requestGameStart",function(data){
         if(socket.myData.amTeacher == true && !games[socket.myData.myGameRoom]){
-            games[socket.myData.myGameRoom] = new Servergame(socket.myData.myGameRoom, data, uniqueGameCode++)
+            var uniqueCode = crypto.randomBytes(16).toString("hex");
+            games[socket.myData.myGameRoom] = new Servergame(socket.myData.myGameRoom, data, uniqueCode)
             games[socket.myData.myGameRoom].addPlayer(socket.id,socket.myData.myName,socket)
             socket.to(socket.myData.myGameRoom).emit("studentGameStarted",data)
             socket.emit("gameStarted",data)

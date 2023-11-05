@@ -315,11 +315,11 @@ function leaveQuiz(){
             resultsToSend.push({resultId: uid, result: result, tries: 0})
             uploadResults()
         }
-        updateTopRight();
     }
     if(hasPassed && !isPractice){
         if(selectedQuizType == "Addition" && selectedLevel > myMaxAdditionLevel) myMaxAdditionLevel = selectedLevel;
         else if (selectedQuizType == "Subtraction" && selectedLevel > myMaxSubtractionLevel) myMaxSubtractionLevel = selectedLevel;
+        updateTopRight();
     }
 }
 

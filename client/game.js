@@ -533,6 +533,11 @@ function takeGameUpdate(data){
         if(event[0] == "PLAYERENERGY"){
             newParticle(event[2].type, event[2].x, event[2].y)
         }
+        if(event[0] == "PLAYERHEALED"){
+            if(socket.id == event[2].playerHealedID){
+                takeDamage(event[2].amount)
+            }
+        }
         if(event[0] == "ROCKETEXPLODE"){
             newParticle("rocketexplode", event[2].x, event[2].y)
         }
@@ -540,9 +545,8 @@ function takeGameUpdate(data){
             newParticle("enemyexplode", event[2].x, event[2].y)
         }
         if(event[0] == "LASERFIRED"){
-            //newLaser(event[2])
             event[2].duration = 10;
-            lasers.push(event[2])
+            lasers.push(event[2]);
         }
     }
     currentGameData.wave = data.wave;
@@ -937,6 +941,7 @@ function drawAndUpdateBullets(realdelta){
         var bulletY = bullet.y + bullet.vY*delta*bullet.speed
         bullet.dX = bulletX
         bullet.dY = bulletY
+        bullet.lifetime -= delta/7;
         var bulletColor = "magenta"
         if(bullet.team == "ENEMY"){
             bulletColor = "red"
@@ -965,7 +970,7 @@ function drawAndUpdateBullets(realdelta){
             drawCircle(bulletX,bulletY,1.2*bullet.size,"white")
         }
 
-        if(bulletX < 0 || bulletX > 2500 || bulletY < 0 || bulletY > 2500){
+        if(bulletX < 0 || bulletX > 2500 || bulletY < 0 || bulletY > 2500 || bullet.lifetime <= 0){
             deleteBullet(bullet.id)
         }
 
@@ -990,15 +995,6 @@ function drawAndUpdateBullets(realdelta){
                 takeDamage(bullet.damage);
                 gameInformation.push(["PLAYERDAMAGE",socket.id,{x: myPos.x, y: myPos.y, type: "playerdamage"}])
                 deleteBullet(bullet.id)
-            }
-        }
-        if(bullet.team == "CLASS" && bullet.health == true && bullet.launcherId != socket.id){
-            var dX = myPos.x - bullet.dX
-            var dY = myPos.y - bullet.dY
-            var dist = Math.sqrt(dX**2+dY**2)||0;
-            if(dist < 11 + bullet.size){
-                gameInformation.push(["BULLETDEATH",socket.id,{id: bullet.id, x: bullet.dX, y: bullet.dY, type: bullet.explosionClass}])
-                takeDamage(bullet.damage);
             }
         }
 
@@ -1039,6 +1035,20 @@ function drawAndUpdateBullets(realdelta){
                 }
             }
         })
+        if(bullet.health){
+            lob(currentGameData.players, function(player){
+                if(player.id != socket.id){
+                    var dX = getShadowX(player) - bullet.dX
+                    var dY = getShadowY(player) - bullet.dY
+                    var dist = Math.sqrt(dX**2+dY**2)||0;
+                    if(dist < 11 + bullet.size){
+                        gameInformation.push(["BULLETDEATH",socket.id,{id: bullet.id, x: bullet.dX, y: bullet.dY, type: bullet.explosionClass}])
+                        deleteBullet(bullet.id);
+                        gameInformation.push(["PLAYERHEALED",socket.id,{playerHealedID: player.id, amount: bullet.damage}])
+                    }
+                }
+            })
+        }
         if(bullet.rocketCooldown < 0){
             newParticle("smoke",bullet.dX, bullet.dY)
             bullet.rocketCooldown = 5;
@@ -1128,14 +1138,15 @@ function getDistance(a,b){
 //Creates a bullet! vX and vY represent a unit vector
 function createBullet(vX, vY,type){
     if(myStats.amDead) return;
-    var myBullet = {id: uniqueId(), x: myPos.x, y: myPos.y, launcherId: socket.id, vX: vX, vY: vY, spawnTime: Date.now(), size: 2, speed: 3, damage: 4 * myStats.damageModifier, team: "CLASS", explosionClass: "basic", launchEffect: "basicshot"}
+    var myBullet = {id: uniqueId(), x: myPos.x, y: myPos.y, launcherId: socket.id, vX: vX, vY: vY, spawnTime: Date.now(), size: 2, speed: 3, lifetime: 2000, damage: 4 * myStats.damageModifier, team: "CLASS", explosionClass: "basic", launchEffect: "basicshot"}
     if(type == "splash"){
-        myBullet = {id: uniqueId(), x: myPos.x, y: myPos.y, launcherId: socket.id, vX: vX, vY: vY, spawnTime: Date.now(), size: 20, speed: 2.6, damage: 8 * myStats.damageModifier, splash: true, flashes: true, team: "CLASS", explosionClass: "hugeexplosion", launchEffect: "splashshot"}
+        myBullet = {id: uniqueId(), x: myPos.x, y: myPos.y, launcherId: socket.id, vX: vX, vY: vY, spawnTime: Date.now(), size: 20, speed: 2.6, lifetime: 2000, damage: 8 * myStats.damageModifier, splash: true, flashes: true, team: "CLASS", explosionClass: "hugeexplosion", launchEffect: "splashshot"}
     }
     if(type == "health"){
-        myBullet = {id: uniqueId(), x: myPos.x, y: myPos.y, launcherId: socket.id, vX: vX, vY: vY, spawnTime: Date.now(), size: 7, speed: 2.5, damage: -0.5 * myStats.damageModifier, health: true, team: "CLASS", explosionClass: "healthexplosion", launchEffect: "healthshot"}
+        myBullet = {id: uniqueId(), x: myPos.x, y: myPos.y, launcherId: socket.id, vX: vX, vY: vY, spawnTime: Date.now(), size: 7, speed: 2.5, lifetime: 1200, damage: -0.5 * myStats.damageModifier, health: true, team: "CLASS", explosionClass: "healthexplosion", launchEffect: "healthshot"}
     }
     if(type == "rocket"){
+        myBullet.lifetime = 3000;
         myBullet.isRocket = true;
         myBullet.size = 4;
         myBullet.rocketCooldown = 0;
