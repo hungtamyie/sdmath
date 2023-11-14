@@ -53,8 +53,10 @@ function displayRecords(filter,showHidden){
             if(checkboxes[1]==false && passed==false) continue;
             if(checkboxes[2]==false && (type=="Add. Pract." || type=="Add. Test")) continue;
             if(checkboxes[3]==false && (type=="Subt. Pract." || type=="Subt. Test")) continue;
-            if(checkboxes[4]==false && (type=="Add. Test" || type=="Subt. Test")) continue;
-            if(checkboxes[5]==false && (type=="Subt. Pract." || type=="Add. Pract.")) continue;
+            if(checkboxes[6]==false && (type=="Mult. Pract." || type=="Mult. Test")) continue;
+            if(checkboxes[7]==false && (type=="Div. Pract." || type=="Div. Test")) continue;
+            if(checkboxes[4]==false && (type=="Add. Test" || type=="Subt. Test" || type=="Div. Test" || type=="Mult. Test")) continue;
+            if(checkboxes[5]==false && (type=="Subt. Pract." || type=="Add. Pract." || type=="Div. Pract." || type=="Mult. Pract.")) continue;
             if(currentStudentFilter != "" && !(name.toLowerCase()).startsWith(currentStudentFilter.toLowerCase())) continue;
 
             $("#tableContentContainer").append('<div class="tableRow" id="'+rowId+'">\
@@ -132,11 +134,11 @@ function hideSortWarning(){
 }
 
 var checkboxes = [
-    true,true,true,true,true,true
+    true,true,true,true,true,true,true,true
 ]
 function checkboxClicked(num){
     checkboxes[num] = !checkboxes[num]
-    for(let i = 0; i < 6; i++){
+    for(let i = 0; i < 8; i++){
         if(checkboxes[i]==false){
             $("#checkbox" + i).removeClass("checked")
         }
@@ -169,7 +171,7 @@ function getCopy(){
         if(passed){
             symbolToShow = "P"
         }
-        if(type == "Add. Pract." || type == "Subt. Pract."){symbolToShow = " "}
+        if(type == "Add. Pract." || type == "Subt. Pract."||type == "Mult. Pract." || type=="Div. Pract."){symbolToShow = " "}
 
 
         if(studentRecords[i][8]) continue;
@@ -177,8 +179,10 @@ function getCopy(){
         if(checkboxes[1]==false && passed==false) continue;
         if(checkboxes[2]==false && (type=="Add. Pract." || type=="Add. Test")) continue;
         if(checkboxes[3]==false && (type=="Subt. Pract." || type=="Subt. Test")) continue;
-        if(checkboxes[4]==false && (type=="Add. Test" || type=="Subt. Test")) continue;
-        if(checkboxes[5]==false && (type=="Subt. Pract." || type=="Add. Pract.")) continue;
+        if(checkboxes[6]==false && (type=="Mult. Pract." || type=="Mult. Test")) continue;
+        if(checkboxes[7]==false && (type=="Div. Pract." || type=="Div. Test")) continue;
+        if(checkboxes[4]==false && (type=="Add. Test" || type=="Subt. Test" || type=="Div. Test" || type=="Mult. Test")) continue;
+        if(checkboxes[5]==false && (type=="Subt. Pract." || type=="Add. Pract." || type=="Div. Pract." || type=="Mult. Pract.")) continue;
         if(currentStudentFilter != "" && !(name.toLowerCase()).startsWith(currentStudentFilter.toLowerCase())) continue;
 
         $("#copyPage").append(symbolToShow + "  " + cutText(name, 20) + "     " + cutText(type, 15) + "   ")

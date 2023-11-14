@@ -70,6 +70,8 @@ function changeScale(){
 
 var myMaxAdditionLevel = 0;
 var myMaxSubtractionLevel = 0;
+var myMaxDivisionLevel = 0;
+var myMaxMultiplicationLevel = 0;
 var gameRunning = false;
 var offlineMode = false;
 var timeLimit = 45
@@ -80,25 +82,47 @@ var scoreTally = [0,0]
 function changeQuizType(type){
     if(type != selectedQuizType){
         if(type == "Subtraction"){
-            $("#additionButton").addClass("deselected");
-            $("#subtractionButton").removeClass("deselected");
+            switchHighlightedButton("subtraction")
             selectedQuizType = "Subtraction";
         }
         if(type == "Addition"){
-            $("#subtractionButton").addClass("deselected");
-            $("#additionButton").removeClass("deselected");
+            switchHighlightedButton("addition")
             selectedQuizType = "Addition";
         }
+        if(type == "Multiplication"){
+            switchHighlightedButton("multiplication")
+            selectedQuizType = "Multiplication";
+        }
+        if(type == "Division"){
+            switchHighlightedButton("division")
+            selectedQuizType = "Division";
+        }
+        changeLevel(0)
         updateTopRight();
     }
+}
+
+function switchHighlightedButton(button){
+    $("#subtractionButton").addClass("deselected");
+    $("#additionButton").addClass("deselected");
+    $("#multiplicationButton").addClass("deselected");
+    $("#divisionButton").addClass("deselected");
+
+    $("#"+button+"Button").removeClass("deselected");
 }
 
 function updateTopRight(){
     if(selectedQuizType == "Addition"){
         $("#yourLevelInfo").html("You have passed<br> Level " + myMaxAdditionLevel + " Addition");
     }
-    else {
+    else if(selectedQuizType == "Subtraction") {
         $("#yourLevelInfo").html("You have passed<br> Level " + myMaxSubtractionLevel + " Subtraction");
+    }
+    else if(selectedQuizType == "Multiplication") {
+        $("#yourLevelInfo").html("You have passed<br> Level " + myMaxMultiplicationLevel + " Multiplication");
+    }
+    else if(selectedQuizType == "Division") {
+        $("#yourLevelInfo").html("You have passed<br> Level " + myMaxDivisionLevel + " Division");
     }
 }
 
@@ -131,11 +155,21 @@ function makePossesive(name){
 
 function changeLevel(amount){
     selectedLevel += amount;
-    if(selectedLevel < 1){
-        selectedLevel = 1;
+    if(selectedQuizType == "Multiplication" || selectedQuizType == "Division"){
+        if(selectedLevel < 1){
+            selectedLevel = 1;
+        }
+        if(selectedLevel > 12){
+            selectedLevel = 12;
+        }
     }
-    if(selectedLevel > 10){
-        selectedLevel = 10;
+    else {
+        if(selectedLevel < 1){
+            selectedLevel = 1;
+        }
+        if(selectedLevel > 10){
+            selectedLevel = 10;
+        }
     }
     $("#levelDisplay").html("Level " + selectedLevel);
 }
@@ -181,6 +215,13 @@ function start(isQuiz){
         startTime = new Date().getTime();
         nextQuestion();
     }
+
+    if(selectedQuizType == "Multiplication"){
+        $("#quizTitle").css("font-size","55rem")
+    }
+    else {
+        $("#quizTitle").css("font-size","64rem")
+    }
 }
 
 function nextQuestion(){
@@ -192,8 +233,14 @@ function nextQuestion(){
     if(selectedQuizType == "Addition"){
         $("#question").html(currentProblems[currentProblemIndex][0] + "+" + currentProblems[currentProblemIndex][1]+"=")
     }
-    else {
+    else if(selectedQuizType == "Subtraction") {
         $("#question").html(currentProblems[currentProblemIndex][0] + "-" + currentProblems[currentProblemIndex][1]+"=")
+    }
+    else if(selectedQuizType == "Multiplication") {
+        $("#question").html(currentProblems[currentProblemIndex][0] + "&#215;" + currentProblems[currentProblemIndex][1]+"=")
+    }
+    else if(selectedQuizType == "Division") {
+        $("#question").html(currentProblems[currentProblemIndex][0] + "&#247;" + currentProblems[currentProblemIndex][1]+"=")
     }
 }
 
@@ -209,8 +256,14 @@ function enterPressed(){
         if(selectedQuizType == "Addition"){
             isCorrect = response == currentProblem[0]+currentProblem[1]
         }
-        else {
+        else if(selectedQuizType == "Subtraction") {
             isCorrect = response == currentProblem[0]-currentProblem[1]
+        }
+        else if(selectedQuizType == "Multiplication") {
+            isCorrect = response == currentProblem[0]*currentProblem[1]
+        }
+        else if(selectedQuizType == "Division") {
+            isCorrect = response == currentProblem[0]/currentProblem[1]
         }
         if(isPractice || teacherSettings.correctionsMidTest){
             if(selectedQuizType == "Addition"){
@@ -222,12 +275,28 @@ function enterPressed(){
                     $("#outputBox").html("<span style='color:#D61313'>"+currentProblem[0]+"+"+currentProblem[1]+"="+response+"</span>&nbsp;&nbsp;&nbsp;&nbsp;"+currentProblem[0]+"+"+currentProblem[1]+"="+(currentProblem[0]+currentProblem[1]))
                 }
             }
-            else {
+            else if(selectedQuizType == "Subtraction") {
                 if(isCorrect){
                     $("#outputBox").html("<div class='check'></div>"+currentProblem[0]+"-"+currentProblem[1]+"="+(currentProblem[0]-currentProblem[1]))
                 }
                 else {
                     $("#outputBox").html("<span style='color:#D61313'>"+currentProblem[0]+"-"+currentProblem[1]+"="+response+"</span>&nbsp;&nbsp;&nbsp;&nbsp;"+currentProblem[0]+"-"+currentProblem[1]+"="+(currentProblem[0]-currentProblem[1]))
+                }
+            }
+            else if(selectedQuizType == "Multiplication") {
+                if(isCorrect){
+                    $("#outputBox").html("<div class='check'></div>"+currentProblem[0]+"&#215;"+currentProblem[1]+"="+(currentProblem[0]*currentProblem[1]))
+                }
+                else {
+                    $("#outputBox").html("<span style='color:#D61313'>"+currentProblem[0]+"&#215;"+currentProblem[1]+"="+response+"</span>&nbsp;&nbsp;&nbsp;&nbsp;"+currentProblem[0]+"&#215;"+currentProblem[1]+"="+(currentProblem[0]*currentProblem[1]))
+                }
+            }
+            else if(selectedQuizType == "Division") {
+                if(isCorrect){
+                    $("#outputBox").html("<div class='check'></div>"+currentProblem[0]+"&#247;"+currentProblem[1]+"="+(currentProblem[0]/currentProblem[1]))
+                }
+                else {
+                    $("#outputBox").html("<span style='color:#D61313'>"+currentProblem[0]+"&#247;"+currentProblem[1]+"="+response+"</span>&nbsp;&nbsp;&nbsp;&nbsp;"+currentProblem[0]+"&#247;"+currentProblem[1]+"="+(currentProblem[0]/currentProblem[1]))
                 }
             }
         }
@@ -291,16 +360,28 @@ function leaveQuiz(){
         if(selectedQuizType == "Addition"){
             type = "Add. Pract."
         }
-        else {
+        else if(selectedQuizType == "Subtraction"){
             type = "Subt. Pract."
+        }
+        else if(selectedQuizType == "Multiplication"){
+            type = "Mult. Pract."
+        }
+        else if(selectedQuizType == "Division"){
+            type = "Div. Pract."
         }
     }
     else {
         if(selectedQuizType == "Addition"){
             type = "Add. Test"
         }
-        else {
+        else if(selectedQuizType == "Subtraction"){
             type = "Subt. Test"
+        }
+        else if(selectedQuizType == "Multiplication"){
+            type = "Mult. Test"
+        }
+        else if(selectedQuizType == "Division"){
+            type = "Div. Test"
         }
     }
     var uid = uniqueId()
@@ -319,6 +400,8 @@ function leaveQuiz(){
     if(hasPassed && !isPractice){
         if(selectedQuizType == "Addition" && selectedLevel > myMaxAdditionLevel) myMaxAdditionLevel = selectedLevel;
         else if (selectedQuizType == "Subtraction" && selectedLevel > myMaxSubtractionLevel) myMaxSubtractionLevel = selectedLevel;
+        else if (selectedQuizType == "Multiplication" && selectedLevel > myMaxMultiplicationLevel) myMaxMultiplicationLevel = selectedLevel;
+        else if (selectedQuizType == "Division" && selectedLevel > myMaxDivisionLevel) myMaxDivisionLevel = selectedLevel;
         updateTopRight();
     }
 }
@@ -372,7 +455,7 @@ function showUnsentResults(){
             if(passed){
                 symbolToShow = "P"
             }
-            if(type == "Add. Pract." || type == "Subt. Pract."){symbolToShow = " "}
+            if(type == "Add. Pract." || type == "Subt. Pract."||type == "Mult. Pract." || type=="Div. Pract."){symbolToShow = " "}
             var date = new Date(record[9]);
 
             $("#copyPage").append("------------------" + date + "------------------\n")
@@ -409,7 +492,7 @@ function showUnsentResults(){
         if(passed){
             symbolToShow = "P"
         }
-        if(type == "Add. Pract." || type == "Subt. Pract."){symbolToShow = " "}
+        if(type == "Add. Pract." || type == "Subt. Pract."||type == "Mult. Pract." || type=="Div. Pract."){symbolToShow = " "}
         var date = new Date(record[9]);
 
         $("#copyPage").append("------------------" + date + "------------------\n")

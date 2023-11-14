@@ -84,16 +84,21 @@
         </div>
     </div>
     <div class="screen" id="levelSelectScreen">
-        <div class="content_box login_content_box">
+        <div class="content_box level_select_content_box">
             <div class="title">SD Math</div>
             <div class="light_blue_button button noselect" id="additionButton" onclick="changeQuizType('Addition')">Addition</div>
-            <br>
             <div class="light_blue_button button noselect deselected" id="subtractionButton" onclick="changeQuizType('Subtraction')">Subtraction</div>
+            <br>
+            <div class="light_blue_button button noselect deselected" id="multiplicationButton" onclick="changeQuizType('Multiplication')">Multiplication</div>
+            <div class="light_blue_button button noselect deselected" id="divisionButton" onclick="changeQuizType('Division')">Division</div>
+            <br>
+            <br>
             <div class="level_selection_box">
                 <div onclick="changeLevel(-1)" class="arrowLeft noselect"><img class="arrow_image rotate noselect" src="images/arrow.png"></div>
                 <div id="levelDisplay">Level 1</div>
                 <div onclick="changeLevel(1)" class="arrowRight noselect"><img class="arrow_image noselect" src="images/arrow.png"></div>
             </div>
+            <br>
             <div class="blue_button button noselect" onclick="start(false)">Practice ></div>
             <div class="green_button button noselect" onclick="start(true)">Test ></div>
         </div>
@@ -106,7 +111,7 @@
             <div class="timeBanner" id="timeBanner"><span id="timeDisplay">515s</span></div>
             <div class="blue_container">
                 <div id="question" class="question">3+5=</div>
-                <input class="answer_input" id="answerInput" maxlength="2" autocomplete="off">
+                <input class="answer_input" id="answerInput" maxlength="3" autocomplete="off">
             </div>
             <br>
             <div class="dark_container" id="outputBox">
@@ -287,15 +292,15 @@
                     <div class="checkbox checked" id="checkbox0" onclick="checkboxClicked(0)"></div> Show passed attempts <br>
                     <div class="checkbox checked" id="checkbox1" onclick="checkboxClicked(1)"></div> Show failed attempts <br><br>
                     <div class="checkbox checked" id="checkbox2" onclick="checkboxClicked(2)"></div> Show addition <br>
-                    <div class="checkbox checked" id="checkbox3" onclick="checkboxClicked(3)"></div> Show subtraction <br><br>
+                    <div class="checkbox checked" id="checkbox3" onclick="checkboxClicked(3)"></div> Show subtraction <br>
+                    <div class="checkbox checked" id="checkbox6" onclick="checkboxClicked(6)"></div> Show multiplication <br>
+                    <div class="checkbox checked" id="checkbox7" onclick="checkboxClicked(7)"></div> Show division <br><br>
                     <div class="checkbox checked" id="checkbox4" onclick="checkboxClicked(4)"></div> Show tests <br>
                     <div class="checkbox checked" id="checkbox5" onclick="checkboxClicked(5)"></div> Show practice <br>
                 </div>
                 <br><br>
                 <div class="filterInnerContainer center_align noselect">
                     <input class="student_name_input" id="studentNameInput" placeholder="Student name" maxlength="25" autocomplete="off">
-                    <div class="button runsearch" onclick="searchStudents()">Run Search</div>
-                    <div class="button clearsearch" onclick="clearStudentSearch()">Clear</div>
                 </div>
             </div>
             <div class="newFeatureContainer">
@@ -329,6 +334,10 @@
             <div class="launchGameButton button" onclick="requestGameLaunch('Addition')">Launch as addition</div>
             <br>
             <div class="launchGameButton button" onclick="requestGameLaunch('Subtraction')">Launch as subtraction</div>
+            <br>
+            <div class="launchGameButton button" onclick="requestGameLaunch('Multiplication')">Launch as multiplication</div>
+            <br>
+            <div class="launchGameButton button" onclick="requestGameLaunch('Division')">Launch as division</div>
             <br>
             <div class="cancelGameButton button" onclick="changeScreen('teacherScreen')">Cancel</div>
         </div>

@@ -266,8 +266,8 @@ class Servergame {
                     targetOffsetDist = Math.sqrt(targetOffsetX**2+targetOffsetY**2)||1;
 
                     var enemyBullet
-                    if(enemy.type==2) enemyBullet={id: this.newId(), x: enemy.x, y: enemy.y, launcherId: enemy.id, vX: targetOffsetX/targetOffsetDist, vY: targetOffsetY/targetOffsetDist, spawnTime: Date.now(), size: 2.5, speed: 1.8, lifetime: 4000*8, damage: 4, shieldDamage: 0.1, team: "ENEMY", explosionClass: "enemybasic", launchEffect: "enemyshot"}
-                    if(enemy.type==3) enemyBullet={id: this.newId(), x: enemy.x, y: enemy.y, launcherId: enemy.id, vX: targetOffsetX/targetOffsetDist, vY: targetOffsetY/targetOffsetDist, spawnTime: Date.now(), size: 15, speed: 1, lifetime: 10000*10, damage: 10, shieldDamage: 7, flashes: true, team: "ENEMY", explosionClass: "enemyhuge", launchEffect: "hugeenemyshot"}
+                    if(enemy.type==2) enemyBullet={id: this.newId(), x: enemy.x, y: enemy.y, launcherId: enemy.id, vX: targetOffsetX/targetOffsetDist, vY: targetOffsetY/targetOffsetDist, spawnTime: Date.now(), size: 2.5, speed: 1.8, lifetime: 4000*16, damage: 4, shieldDamage: 0.1, team: "ENEMY", explosionClass: "enemybasic", launchEffect: "enemyshot"}
+                    if(enemy.type==3) enemyBullet={id: this.newId(), x: enemy.x, y: enemy.y, launcherId: enemy.id, vX: targetOffsetX/targetOffsetDist, vY: targetOffsetY/targetOffsetDist, spawnTime: Date.now(), size: 15, speed: 1, lifetime: 10000*20, damage: 10, shieldDamage: 7, flashes: true, team: "ENEMY", explosionClass: "enemyhuge", launchEffect: "hugeenemyshot"}
                     this.events.push(["NEWBULLET", enemyBullet.id, enemyBullet])
                     enemy.attackTimer = enemy.reloadTime/2 + (Math.random()*enemy.reloadTime/2);
                 }

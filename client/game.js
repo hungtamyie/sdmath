@@ -8,6 +8,12 @@ function startGame(type, isReconnect){
     if(type == "Addition"){
         level = myMaxAdditionLevel
     }
+    else if(type == "Multiplication"){
+        level = myMaxMultiplicationLevel
+    }
+    else if(type == "Division"){
+        level = myMaxDivisionLevel
+    }
     else {
         level = myMaxSubtractionLevel
     }
@@ -595,11 +601,11 @@ function updateUI(){
         if(ressurectionPercent > 1) ressurectionPercent = 1
         ressurectionPercent = (healthBarWidth*ressurectionPercent)+"em"
         $("#hpBarInner").css("width", ressurectionPercent);
-        if(!amTeacher){
-            ctx.fillStyle = "white"
-            ctx.beginPath();
-            ctx.arc(canvas.width/2,canvas.height/2,3*S,0,Math.PI*2,false);
-            ctx.fill()
+        if(!amTeacher && !myStats.gameOver){
+            ctx.fillStyle = "red"
+            ctx.textAlign = "center";
+            ctx.font = "5em Lilita One";
+            ctx.fillText("You died!",canvas.width/2,canvas.height/2);
         }
     }
     $("#mathBoxAnswer").css("opacity", myStats.submissionTimer/100)
@@ -628,8 +634,14 @@ function updateMathBox(){
     if(myStats.mathType == "Addition"){
         $("#mathBox").html(myProblems[0][0] + " + " + myProblems[0][1] + " = " + myCurrentAnswer)
     }
+    else if(myStats.mathType == "Subtraction"){
+        $("#mathBox").html(myProblems[0][0] + " - " + myProblems[0][1] + " = " + myCurrentAnswer)
+    }
+    else if(myStats.mathType == "Multiplication"){
+        $("#mathBox").html(myProblems[0][0] + " &#215; " + myProblems[0][1] + " = " + myCurrentAnswer)
+    }
     else {
-        $("#mathBox").html( myProblems[0][0] + " - " + myProblems[0][1] + " = " + myCurrentAnswer)
+        $("#mathBox").html( myProblems[0][0] + " &#247; " + myProblems[0][1] + " = " + myCurrentAnswer)
     }
     if((!myStats.amDead && (myStats.energy == myStats.maxEnergy || myStats.shieldLevel != 0)) || myStats.gameOver){
         $("#mathBox").html("")
@@ -680,6 +692,36 @@ function doGameMath(symbol){
                         $("#mathBoxAnswer").css("color", "#D20000")
                     }
                 }
+                if(myStats.mathType == "Multiplication"){
+                    if(myProblems[0][0] * myProblems[0][1] == Number(myCurrentAnswer)){
+                        gainEnergy()
+                        gameInformation.push(["PLAYERENERGY",socket.id,{x: myPos.x, y: myPos.y, type: "playerenergy"}])
+                        $("#mathBoxAnswer").html("Correct!")
+                        $("#mathBoxAnswer").css("color", "#1CA805")
+                    }
+                    else {
+                        loseEnergy()
+                        //takeDamage(0.5)
+                        gameInformation.push(["PLAYERDAMAGE",socket.id,{x: myPos.x, y: myPos.y, type: "playerdamage"}])
+                        $("#mathBoxAnswer").html("Oops!")
+                        $("#mathBoxAnswer").css("color", "#D20000")
+                    }
+                }
+                if(myStats.mathType == "Division"){
+                    if(myProblems[0][0] / myProblems[0][1] == Number(myCurrentAnswer)){
+                        gainEnergy()
+                        gameInformation.push(["PLAYERENERGY",socket.id,{x: myPos.x, y: myPos.y, type: "playerenergy"}])
+                        $("#mathBoxAnswer").html("Correct!")
+                        $("#mathBoxAnswer").css("color", "#1CA805")
+                    }
+                    else {
+                        loseEnergy()
+                        //takeDamage(0.5)
+                        gameInformation.push(["PLAYERDAMAGE",socket.id,{x: myPos.x, y: myPos.y, type: "playerdamage"}])
+                        $("#mathBoxAnswer").html("Oops!")
+                        $("#mathBoxAnswer").css("color", "#D20000")
+                    }
+                }
             }
         }
         else {
@@ -698,6 +740,32 @@ function doGameMath(symbol){
             }
             if(myStats.mathType == "Subtraction"){
                 if(myProblems[0][0] - myProblems[0][1] == Number(myCurrentAnswer)){
+                    myStats.respawnProblems -= 1;
+                    $("#mathBoxAnswer").html("Correct!")
+                    $("#mathBoxAnswer").css("color", "#1CA805")
+                }
+                else {
+                    myStats.respawnProblems += 3;
+                    if(myStats.respawnProblems > respawnMapping[myStats.respawnCount]){myStats.respawnProblems = respawnMapping[myStats.respawnCount]}
+                    $("#mathBoxAnswer").html("Oops!")
+                    $("#mathBoxAnswer").css("color", "#D20000")
+                }
+            }
+            if(myStats.mathType == "Multiplication"){
+                if(myProblems[0][0] * myProblems[0][1] == Number(myCurrentAnswer)){
+                    myStats.respawnProblems -= 1;
+                    $("#mathBoxAnswer").html("Correct!")
+                    $("#mathBoxAnswer").css("color", "#1CA805")
+                }
+                else {
+                    myStats.respawnProblems += 3;
+                    if(myStats.respawnProblems > respawnMapping[myStats.respawnCount]){myStats.respawnProblems = respawnMapping[myStats.respawnCount]}
+                    $("#mathBoxAnswer").html("Oops!")
+                    $("#mathBoxAnswer").css("color", "#D20000")
+                }
+            }
+            if(myStats.mathType == "Division"){
+                if(myProblems[0][0] / myProblems[0][1] == Number(myCurrentAnswer)){
                     myStats.respawnProblems -= 1;
                     $("#mathBoxAnswer").html("Correct!")
                     $("#mathBoxAnswer").css("color", "#1CA805")
