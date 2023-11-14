@@ -92,7 +92,7 @@ class Servergame {
 
     update(delta){
         let waveToSpawn = false
-        if(!this.gameOver){waveToSpawn=this.rounds.updateWaveSpawn(delta, (this.enemyCount <= 0 && this.wave > 0), (this.realenemyCount > 50))}
+        if(!this.gameOver){waveToSpawn=this.rounds.updateWaveSpawn(delta, (this.enemyCount <= 8 && this.wave > 0), (this.realenemyCount > 50))}
         if(waveToSpawn){
             if(waveToSpawn.incrementsLevel){this.wave++}
             if(waveToSpawn.t0){
